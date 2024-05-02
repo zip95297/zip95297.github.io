@@ -130,3 +130,9 @@ highlight_shrink: false # true: 打开文章默认折叠代码块内容 / false:
 highlight_height_limit: false # unit: px
 code_word_wrap: false #是否关闭滚动条
 
+# Local search
+local_search:
+  enable: true
+  labels:
+    input_placeholder: Search for Posts
+    hits_empty: "坏了！没找到 ${query}" # 如果没有查到内容相关内容显示
