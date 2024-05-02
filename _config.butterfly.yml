@@ -111,7 +111,7 @@ menu:
     标签: /tags/ || fa fa-tags
     归档: /archives/ || fa fa-folder-open
   生活 || fas fa-list:
-    分享: /shuoshuo/ || fa fa-comments-o
+    分享: /share/ || fa fa-comments-o
     相册: /photos/ || fa fa-camera-retro
     音乐: /music/ || fa fa-music
     影视: /movies/ || fas fa-video
@@ -136,3 +136,28 @@ local_search:
   labels:
     input_placeholder: Search for Posts
     hits_empty: "坏了！没找到 ${query}" # 如果没有查到内容相关内容显示
+
+# the subtitle on homepage (主頁subtitle)
+subtitle:
+  enable: true
+  # Typewriter Effect (开启打字效果)
+  effect: true
+  # loop (循環打字)
+  loop: true
+  # source調用第三方服務
+  # source: false 關閉調用
+  # source: 1  調用搏天api的隨機語錄（簡體）
+  # source: 2  調用一言網的一句話（簡體）
+  # source: 3  調用一句網（簡體）
+  # source: 4  調用今日詩詞（簡體）
+  # subtitle 會先顯示 source , 再顯示 sub 的內容
+  source: false
+  # 如果有英文逗号' , ',请使用转义字元 &#44;
+  # 如果有英文双引号' " ',请使用转义字元 &quot;
+  # 开头不允許转义字元，如需要，请把整個句子用双引号包住
+  # 如果关闭打字效果，subtitle只会现示sub的第一行文字
+  sub:
+    - 你在抱怨什么呢
+    - 为明天到来的事，说人生像是没有意义
+    - 没有选择会是唯一的路
+    - 这不是你自己的问题，人终归要好好去生活
