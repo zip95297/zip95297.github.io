@@ -5,15 +5,15 @@
 # Site
 title: 西郊有密林 祝君出重围
 subtitle: '广告位🪧招租'
-description: '哈哈哈哈哈哈'
+description: 'zip95297'
 keywords:
-author: 赵俊博
+author: zip95297
 language: zh-CN
 timezone: Asia/Shanghai
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: http://example.com
+url: http://zip95297.github.io
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
