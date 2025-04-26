@@ -56,6 +56,9 @@ filename_case: 0
 render_drafts: false
 # 每个文章有单独的文件夹 写文章时会同时生成一个同名文件夹，用来放图片之类的资源
 post_asset_folder: true
+marked:
+  prependRoot: true
+  postAsset: true
 relative_link: false
 future: true
 syntax_highlighter: highlight.js
