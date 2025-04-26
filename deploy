@@ -1,0 +1,16 @@
+#!/bin/bash
+# This script is used to deploy the application to the server
+if [ -z "$1" ]; then
+  echo "Usage: $0 <git commit message>"
+  exit 1
+fi
+
+# check if any changes are made
+if [ -z "$(git status --porcelain)" ]; then
+  echo "No changes to commit"
+  exit 0
+fi
+
+git add .
+git commit -m "$1"
+git push origin main
