@@ -5,7 +5,8 @@
 # Site
 title: 西郊有密林 祝君出重围
 #subtitle: 
-description: '哈哈哈哈哈哈'
+# 优先用全局的config
+description: '欢迎'
 keywords:
 author: 赵俊博
 language: zh-CN
