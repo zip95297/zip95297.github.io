@@ -1,4 +1,5 @@
 # Butterfly 主题配置文件
+# https://butterfly.js.org/posts/dc584b87/
 # --------------------------------------
 # 主题配置
 menu:
@@ -58,3 +59,21 @@ subtitle:
     - 招租🪧广告位
 #    - 广告位🪧招租
 
+# --------------------------------------
+# 導航設置
+# --------------------------------------
+
+nav:
+  # 導航欄 Logo 圖片
+  logo:
+  # 是否顯示標題
+  display_title: true
+  # 是否固定導航欄
+  fixed: false
+
+# 頭像設置
+avatar:
+  # 頭像圖片鏈接
+  img: source/images/profile/profile.png
+
+index_img: source/images/profile/profile.png
