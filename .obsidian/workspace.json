@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "fdd3b5ec8088de11",
+        "id": "a0d65d44e78c2fe8",
         "type": "tabs",
         "children": [
           {
-            "id": "f8e55f80594dee42",
+            "id": "7d3fda9cd31fc426",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -155,7 +155,7 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "f8e55f80594dee42",
+  "active": "7d3fda9cd31fc426",
   "lastOpenFiles": [
     "source/_posts/随机过程及其应用.md",
     "source/images/随机过程及其应用img/Pasted image 20250101125925.png",
