@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "26c6c4c4aa1b20ac",
+        "id": "fdd3b5ec8088de11",
         "type": "tabs",
         "children": [
           {
-            "id": "f4e4cf818ad9b764",
+            "id": "f8e55f80594dee42",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -73,7 +73,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 281.5,
+    "collapsed": true
   },
   "right": {
     "id": "7d2fc522cd417b79",
@@ -154,11 +155,23 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "f4e4cf818ad9b764",
+  "active": "f8e55f80594dee42",
   "lastOpenFiles": [
+    "source/_posts/随机过程及其应用.md",
+    "source/images/随机过程及其应用img/Pasted image 20250101125925.png",
+    "source/images/随机过程及其应用img/Pasted image 20250101125913.png",
+    "source/images/随机过程及其应用img/Pasted image 20250101125832.png",
+    "source/images/随机过程及其应用img/Pasted image 20250101125810.png",
+    "source/images/随机过程及其应用img/Pasted image 20250101125802.png",
+    "source/images/随机过程及其应用img/Pasted image 20250101125720.png",
+    "source/images/随机过程及其应用img/Pasted image 20250101125529.png",
+    "source/images/随机过程及其应用img/Pasted image 20241231225452.png",
+    "source/images/随机过程及其应用img/Pasted image 20241231225443.png",
+    "source/images/随机过程及其应用img/Pasted image 20241231204818.png",
+    "source/images/随机过程及其应用img",
+    "source/_posts/first.md",
     "source/_posts/2025-04-27.md",
     "未命名.canvas",
-    "source/about/index.md",
-    "source/_posts/first.md"
+    "source/about/index.md"
   ]
 }
