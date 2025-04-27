@@ -1,0 +1,18 @@
+{
+  "alwaysUpdateLinks": true,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "source/_posts",
+  "newLinkFormat": "relative",
+  "useMarkdownLinks": true,
+  "attachmentFolderPath": "source/images",
+  "userIgnoreFilters": [
+    "node_modules/",
+    "themes/",
+    "source/categories/",
+    "source/archives/",
+    "source/comment/",
+    "source/tags/"
+  ],
+  "trashOption": "local",
+  "promptDelete": false
+}
