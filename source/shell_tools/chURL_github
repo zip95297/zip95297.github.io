@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to replace Markdown image links from ![[image]] to ![](github CDN url)
+# Script to replace Markdown image links from ![[image]] to ![](github url)
 
 # GitHub repository URL base
 GITHUB_BASE="https://github.com/zip95297/zip95297.github.io/blob/main/source/images"
