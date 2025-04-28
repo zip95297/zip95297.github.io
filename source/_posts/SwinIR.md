@@ -256,4 +256,3 @@ def __init__(self, scale, num_feat, num_out_ch, input_resolution=None):
 	m.append(nn.Conv2d(num_feat, (scale**2) * num_out_ch, 3, 1, 1))
 	m.append(nn.PixelShuffle(scale))
 	super(UpsampleOneStep, self).__init__(*m)
-```

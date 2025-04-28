@@ -1,0 +1,69 @@
+#!/bin/bash
+# Script to replace Markdown image links from ![[image]] to ![](github url)
+
+# GitHub repository URL base
+GITHUB_BASE="https://github.com/zip95297/zip95297.github.io/blob/main/source/images"
+
+# Usage hint
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 <file1> [file2 ...]"
+    exit 1
+fi
+
+# Python function for URL encoding
+url_encode() {
+    python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))" "$1"
+}
+
+for file in "$@"; do
+    if [ ! -f "$file" ]; then
+        echo "Error: File '$file' not found"
+        continue
+    fi
+
+    echo "Processing $file ..."
+    cp "$file" "../bak/$file.bak"
+
+    filename=$(basename "$file")
+    filename_noext="${filename%.*}"
+    echo "Filename: $filename"
+    encoded_filename=$(url_encode "$filename_noext")
+    echo "Encoded Filename: $encoded_filename"
+    echo "## $filename"
+
+    count=0
+    spinner="/-\|"
+    i=0
+    # Read the file line by line
+    while IFS= read -r line; do
+        # Process all ![[image]] occurrences in the line
+        while [[ "$line" =~ !\[\[([^\]]+)\]\] ]]; do
+            image="${BASH_REMATCH[1]}"
+            encoded_image=$(url_encode "$image")
+            origin="![[${BASH_REMATCH[1]}]]"  # Original pattern to be replaced
+            replacement="![]($GITHUB_BASE/$encoded_filename/$encoded_image?raw=true)"
+
+            # Display a spinner while processing
+            i=$(( (i + 1) % 4 ))
+            printf "\rProcessing: ${spinner:i:1}  "
+
+            # # Debugging information
+            # echo "Image: $image"
+            # echo "Encoded Image: $encoded_image"
+            # echo "Replacement: $replacement"
+            # echo "Origin: $origin"
+            count=$((count + 1))
+            # Perform replacement: escape the brackets
+            line=${line//"$origin"/"$replacement"} 
+        done
+        
+        echo "$line" >> "${file}.new"  # Output the processed line to a new file
+    done < "$file"
+
+    mv "${file}.new" "$file"
+    echo "Done: Backup saved as $file.bak"
+    echo "Total replacements: $count"
+    echo "----------------------------------------"
+done
+
+echo "✅ All files processed."
