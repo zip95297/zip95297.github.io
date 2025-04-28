@@ -2,8 +2,8 @@
   "alwaysUpdateLinks": true,
   "newFileLocation": "folder",
   "newFileFolderPath": "source/_posts",
-  "newLinkFormat": "relative",
-  "useMarkdownLinks": true,
+  "newLinkFormat": "shortest",
+  "useMarkdownLinks": false,
   "attachmentFolderPath": "source/images",
   "userIgnoreFilters": [
     "node_modules/",
@@ -14,5 +14,5 @@
     "source/tags/"
   ],
   "trashOption": "local",
-  "promptDelete": false
+  "promptDelete": true
 }

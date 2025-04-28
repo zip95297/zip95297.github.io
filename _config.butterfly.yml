@@ -60,3 +60,6 @@ subtitle:
 #    - 广告位🪧招租
 
 # 设置一下头像背景之类的
+avatar:
+  img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/profile.png?raw=true
+  effect: false  # 是否启用头像旋转效果（可选）
