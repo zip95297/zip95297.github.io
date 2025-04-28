@@ -1,12 +1,15 @@
 #!/bin/bash
 # Script to replace Markdown image links from ![[image]] to ![](github CDN url)
-
-# GitHub repository URL base
-GITHUB_BASE="https://github.com/zip95297/zip95297.github.io/blob/main/source/images"
+# TODO 加个进度条
+# GitHub repository URL base with CDN support by jsdelivr
+# GITHUB_BASE="https://github.com/zip95297/zip95297.github.io/blob/main/source/images"
+GITHUB_BASE="https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images"
 
 # Usage hint
 if [ $# -lt 1 ]; then
     echo "Usage: $0 <file1> [file2 ...]"
+    echo "files list"
+    ls ./source/_posts
     exit 1
 fi
 
@@ -15,17 +18,22 @@ url_encode() {
     python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))" "$1"
 }
 
+file_path="./source/_posts"
+
 for file in "$@"; do
+    file="${file_path}/$file"
     if [ ! -f "$file" ]; then
         echo "Error: File '$file' not found"
         continue
     fi
 
     echo "Processing $file ..."
-    cp "$file" "../bak/$file.bak"
 
     filename=$(basename "$file")
     filename_noext="${filename%.*}"
+
+    cp "$file" "./source/bak/$filename.bak"
+
     echo "Filename: $filename"
     encoded_filename=$(url_encode "$filename_noext")
     echo "Encoded Filename: $encoded_filename"
@@ -61,7 +69,7 @@ for file in "$@"; do
     done < "$file"
 
     mv "${file}.new" "$file"
-    echo "Done: Backup saved as $file.bak"
+    echo "Done: Backup saved as ./source/bak/$filename.bak"
     echo "Total replacements: $count"
     echo "----------------------------------------"
 done

@@ -7,6 +7,8 @@ GITHUB_BASE="https://github.com/zip95297/zip95297.github.io/blob/main/source/ima
 # Usage hint
 if [ $# -lt 1 ]; then
     echo "Usage: $0 <file1> [file2 ...]"
+    echo "files list"
+    ls ./source/_posts
     exit 1
 fi
 
@@ -15,7 +17,9 @@ url_encode() {
     python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))" "$1"
 }
 
+file_path="./source/_posts"
 for file in "$@"; do
+    file="${file_path}/$file"
     if [ ! -f "$file" ]; then
         echo "Error: File '$file' not found"
         continue
