@@ -1,2 +1,3 @@
+#!/bin/bash
 eza --icons ./source/bak
 rm ./source/bak/*

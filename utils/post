@@ -1,0 +1,55 @@
+#!/bin/bash
+
+Usage() {
+    echo "Usage: $0 -n|--note <md file path> [-i|--img <image file path>]"
+    echo "       $0 -h|--help"
+    echo "this script is used to post a note [with imgs to blog dir]"
+    echo "execute this script in the blog root dir"
+    exit 1
+}
+
+# 解析参数
+if [[ $# -eq 0 ]]; then
+    Usage
+fi
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -n|--note)
+            NOTE="$2"
+            # 检查是不是md结尾的 文件
+            if [[ ! -f $NOTE || "${NOTE##*.}" != "md" ]]; then
+                echo "Error: The file must be a markdown file."
+                exit 1
+            fi
+
+            # 获取文件是什么时候创建的
+            NOTE_DATE=$(stat -f %Sm "$NOTE")
+            NOTE_DATE=$(date -j -f "%b %d %H:%M:%S %Y" "$NOTE_DATE" "+%Y-%m-%d %H:%M:%S")
+            NOTE_BASENAME=$(basename "$NOTE")
+            echo "NOTE: $NOTE MOVING to source/_post ..."
+            cp "$NOTE" /Users/zip95297/Repository/BLOG/zjb-blog/source/_posts
+            ./addAttribute "$NOTE" "$NOTE_DATE" # 添加属性
+            ./addAttribute "$NOTE"  # 添加属性
+            ./chURL "$NOTE_BASENAME" # 修改url
+            shift 2
+            ;;
+        -i|--img)
+            IMG="$2"
+            NOTE_NAME=$(basename "$NOTE" .md)
+            echo "IMG: $IMG MOVING to source/images/$NOTE_NAME ..."
+            # 获取 md 的名字 没有.md
+            mkdir -p "/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$NOTE_NAME"
+            cp "$IMG"/* "/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$NOTE_NAME/"
+            echo done
+            shift 2
+            ;;
+        -h|--help)
+            Usage
+            ;;
+        *)
+            echo "Unknown option: $1"
+            Usage
+            ;;
+    esac
+done

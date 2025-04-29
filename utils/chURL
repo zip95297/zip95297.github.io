@@ -9,7 +9,7 @@ GITHUB_BASE="https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source
 if [ $# -lt 1 ]; then
     echo "Usage: $0 <file1> [file2 ...]"
     echo "files list"
-    ls ./source/_posts
+    ls /Users/zip95297/Repository/BLOG/zjb-blog/source/_posts
     exit 1
 fi
 
@@ -18,7 +18,7 @@ url_encode() {
     python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))" "$1"
 }
 
-file_path="./source/_posts"
+file_path="/Users/zip95297/Repository/BLOG/zjb-blog/source/_posts"
 
 for file in "$@"; do
     file="${file_path}/$file"
@@ -32,7 +32,7 @@ for file in "$@"; do
     filename=$(basename "$file")
     filename_noext="${filename%.*}"
 
-    cp "$file" "./source/bak/$filename.bak"
+    cp "$file" "/Users/zip95297/Repository/BLOG/zjb-blog/source/bak/$filename.bak"
 
     echo "Filename: $filename"
     encoded_filename=$(url_encode "$filename_noext")
