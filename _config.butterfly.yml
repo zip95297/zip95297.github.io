@@ -2,6 +2,22 @@
 # https://butterfly.js.org/posts/dc584b87/
 # --------------------------------------
 # 主题配置
+
+nav:
+  # 導航欄 Logo 圖片
+  logo: 
+  # 是否顯示標題
+  display_title: true
+  # 是否固定導航欄
+  fixed: false
+
+# 加载动画
+preloader: true
+# 是否顯示返回頂部按鈕
+back2top: true
+# 首页图片
+index_img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/profile.webp?raw=true
+
 menu:
   主页: / || fas fa-home
   博文 || fa fa-graduation-cap:
@@ -33,7 +49,7 @@ local_search:
   enable: true
   labels:
     input_placeholder: Search for Posts
-    hits_empty: "坏了！没找到 ${query}" # 如果没有查到内容相关内容显示
+    hits_empty: "坏了坏了！没找到 ${query}" # 如果没有查到内容相关内容显示
 
 # the subtitle on homepage (主頁subtitle)
 subtitle:
@@ -61,8 +77,10 @@ subtitle:
 
 # 设置一下头像背景之类的
 avatar:
-  img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/profile.png?raw=true
+  img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/profile.webp?raw=true
   effect: false  # 是否启用头像旋转效果（可选）
+
+
 
 # 下面设置一下 对数学公式的渲染
 math:
