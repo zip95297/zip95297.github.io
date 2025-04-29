@@ -11,42 +11,74 @@ nav:
   # 是否固定導航欄
   fixed: false
 
-# 首页文章布局
-index_layout: 2
+# 首页文章布局 5 / 7
+index_layout: 7
 # 加载动画
 preloader: true
 # 是否顯示返回頂部按鈕
 back2top: true
 # 首页图片
 index_img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/bg2.webp
+top_img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/bg2.webp
 # 背景图
 background: url(https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/bg2.webp)
+# 页脚图
+footer_img: true
 # favicon 浏览器的图标
 favicon: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/profile.webp?raw=true
 # 归档页 的图片
 archive_img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/bg1.webp
 # 分类页 的图片
 category_img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/bg4.webp
+# tag 的图片
+tag_img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/bg3.webp
+# 灯箱效果
+lightbox: 
 
 # 贊助/打賞
 reward:
   # 是否啟用打賞
-  enable: false
+  enable: true
   # 打賞案例文本
-  text:
+  text: 赞赏作者～
   QR_code:
-     - img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/wxpay.webp
+    - img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/wxpay.webp
     #   link:
-       text: 微信
-     - img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/alipay.webp
+      text: 微信
+    - img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/alipay.webp
     #   link:
-       text: 支付寶
+      text: 支付宝
 
+toc:
+  post: true
+  page: false
+  number: true
+  expand: false
+  # Only for post
+  style_simple: false
+  scroll_percent: true
 
-作者: Jerry
-連結: https://butterfly.js.org/posts/4aa8abbe/
-來源: Butterfly
-版權屬於作者所有。商業用途請聯絡作者獲得授權，非商業用途請註明出處。
+post_meta:
+  # Home Page
+  page:
+    # Choose: created / updated / both
+    date_type: created
+    # Choose: date / relative
+    date_format: date
+    categories: true
+    tags: false
+    label: false
+  post:
+    # Choose: left / center
+    position: left
+    # Choose: created / updated / both
+    date_type: both
+    # Choose: date / relative
+    date_format: relative
+    categories: true
+    tags: true
+    label: true
+
 
 # 侧边栏
 aside:
@@ -75,6 +107,36 @@ aside:
     # 是否顯示歸檔卡片
     enable: false
 
+share:
+  # 選擇：sharejs / addtoany
+  # 如果不需要分享功能，保持為空
+  use: sharejs
+
+  # Share.js
+  # https://github.com/overtrue/share.js
+  sharejs:
+    sites: facebook,twitter,wechat,weibo,qq
+
+  # AddToAny
+  # https://www.addtoany.com/
+  addtoany:
+    item: facebook,twitter,wechat,sina_weibo,facebook_messenger,email,copy_link
+
+# 鼠標點擊效果: 文字
+clickShowText:
+  # 是否啟用文字效果
+  enable: true
+  text:
+     - zzZ
+     - Zzz
+     - zZz
+  fontSize: 15px
+  # 是否隨機顯示文字
+  random: false
+  # 是否在移動設備上啟用
+  mobile: true
+
+
 # 頁腳設置
 footer:
   owner:
@@ -88,8 +150,8 @@ footer:
   copyright: false
 
 social:
-   fab fa-github: https://github.com/zip95297 || Github
-   fas fa-envelope: mailto:zip95297@gmail.com || Email
+  fab fa-github: https://github.com/zip95297 || Github || "#hdhfbb"
+  fas fa-envelope: mailto:zip95297@gmail.com || Email || "#000000"
 
 
 
