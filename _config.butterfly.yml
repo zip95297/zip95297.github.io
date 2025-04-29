@@ -16,6 +16,16 @@ pretty_urls:
   trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
   trailing_html: true # Set to false to remove trailing '.html' from permalinks
 
+# 弹窗
+snackbar:
+  enable: true
+  position: bottom-center
+  bg_light: '#49b1f5' #light mode时弹窗背景
+  bg_dark: '#2d3035' #dark mode时弹窗背景
+
+# prefetch (预加载)
+instantpage: true
+
 nav:
   # 導航欄 Logo 圖片
   logo: 
@@ -32,9 +42,11 @@ preloader: true
 back2top: true
 # 首页图片
 index_img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/bg2.webp
+default_top_img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/bg2.webp
 top_img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/bg2.webp
 # 背景图
-background: url(https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/bg2.webp)
+background: 'linear-gradient(20deg, #d0d1d1, #536d90, #363c50)'
+# background: 
 # 页脚图
 footer_img: true
 # favicon 浏览器的图标
@@ -61,6 +73,13 @@ reward:
     - img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/alipay.webp
     #   link:
       text: 支付宝
+
+copy:
+  enable: true
+  # Add the copyright information after copied content
+  copyright:
+    enable: true
+    limit_count: 50
 
 toc:
   post: true
@@ -173,12 +192,12 @@ menu:
     标签: /tags/ || fa fa-tags
     归档: /archives/ || fa fa-folder-open
   生活 || fas fa-list:
-    分享: /share/ || fa fa-comments-o
-    相册: /photos/ || fa fa-camera-retro
+    # 分享: /share/ || fa fa-comments-o
     音乐: /music/ || fa fa-music
+    照片: /photos/ || fa fa-camera-retro
     影视: /movies/ || fas fa-video
   友链: /links/ || fa fa-link
-  留言板: /comment/ || fa fa-paper-plane
+  # 留言板: /comment/ || fa fa-paper-plane
   关于笔者: /about/ || fas fa-heart  
 
 
