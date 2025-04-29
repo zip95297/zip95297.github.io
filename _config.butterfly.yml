@@ -2,6 +2,19 @@
 # https://butterfly.js.org/posts/dc584b87/
 # --------------------------------------
 # 主题配置
+title: 西郊有密林 祝君出重围
+description: '一个人'
+keywords:
+author: zip95297
+language: zh-CN
+timezone: Asia/Shanghai
+
+url: http://zip95297.github.io
+permalink: :year/:month/:day/:title/
+permalink_defaults:
+pretty_urls:
+  trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
+  trailing_html: true # Set to false to remove trailing '.html' from permalinks
 
 nav:
   # 導航欄 Logo 圖片
@@ -172,7 +185,6 @@ menu:
     影视: /movies/ || fas fa-video
   友链: /links/ || fa fa-link
   留言板: /comment/ || fa fa-paper-plane
-  #留言板: /messageboard/ || fa fa-paper-plane
   关于笔者: /about/ || fas fa-heart  
 
 
