@@ -1,0 +1,52 @@
+#!/bin/bash
+
+Usage() {
+    echo "Usage: $0 -n|--note <md file name without .md>"
+    echo "       $0 -h|--help"
+    echo "This script removes a note and its associated image directory"
+    echo "Execute this script in the blog root dir"
+    /Users/zip95297/Repository/BLOG/zjb-blog/utils/listPost
+    exit 1
+}
+
+if [[ $# -eq 0 ]]; then
+    Usage
+fi
+
+if [[ $1 == "-h" || $1 == "--help" ]]; then
+    Usage
+fi
+
+if [[ $1 != "-n" && $1 != "--note" ]]; then
+    echo "Error: missing -n|--note argument"
+    Usage
+fi
+
+ROOT="/Users/zip95297/Repository/BLOG/zjb-blog/source"
+POSTS="$ROOT/_posts"
+IMGS="$ROOT/images"
+
+if [[ "$1" == "-n" || "$1" == "--note" ]]; then
+    echo ""
+else
+    echo "Error: missing -n|--note argument"
+    Usage
+    exit 1
+fi
+
+NOTE="$2"
+if [[ -z "$NOTE" ]]; then
+    echo "Error: missing note name"
+    Usage
+fi
+
+MD_FILE="$POSTS/$NOTE.md"
+IMG_DIR="$IMGS/$NOTE"
+
+echo "Deleting note: $MD_FILE"
+rm -f "$MD_FILE"
+
+echo "Deleting image directory: $IMG_DIR"
+rm -rf "$IMG_DIR"
+
+echo "Done."

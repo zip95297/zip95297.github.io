@@ -1,3 +1,4 @@
 #!/bin/bash
+echo "Backup files below are deleted!"
 eza --icons ./source/bak
-rm ./source/bak/*
+rm /Users/zip95297/Repository/BLOG/zjb-blog/source/bak/*

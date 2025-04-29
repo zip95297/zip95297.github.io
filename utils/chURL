@@ -23,7 +23,7 @@ file_path="/Users/zip95297/Repository/BLOG/zjb-blog/source/_posts"
 for file in "$@"; do
     file="${file_path}/$file"
     if [ ! -f "$file" ]; then
-        echo "Error: File '$file' not found"
+        echo "ERROR: File '$file' not found"
         continue
     fi
 
@@ -57,7 +57,7 @@ for file in "$@"; do
 
             # Display a spinner while processing
             i=$(( (i + 1) % 8 ))
-            printf "\rProcessing change URL: ${spinner:i:1}  "
+            printf "\r⚠️ Processing change URL: ${spinner:i:1}  "
 
             # # Debugging information
             # echo "Image: $image"

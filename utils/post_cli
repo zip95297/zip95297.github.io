@@ -17,9 +17,10 @@ while [[ $# -gt 0 ]]; do
     case $1 in
         -n|--note)
             NOTE="$2"
+            NOTE_SOURCE=$NOTE
             # 检查是不是md结尾的 文件
             if [[ ! -f $NOTE || "${NOTE##*.}" != "md" ]]; then
-                echo "Error: The file must be a markdown file."
+                echo "ERROR: The file must be a markdown file."
                 exit 1
             fi
 
@@ -27,11 +28,13 @@ while [[ $# -gt 0 ]]; do
             NOTE_DATE=$(stat -f %Sm "$NOTE")
             NOTE_DATE=$(date -j -f "%b %d %H:%M:%S %Y" "$NOTE_DATE" "+%Y-%m-%d %H:%M:%S")
             NOTE_BASENAME=$(basename "$NOTE")
-            echo "NOTE: $NOTE MOVING to source/_post ..."
+            echo "⚠️ COPY NOTE: $NOTE MOVING to source/_post ..."
             cp "$NOTE" /Users/zip95297/Repository/BLOG/zjb-blog/source/_posts
-            ./addAttribute "$NOTE" "$NOTE_DATE" # 添加属性
-            ./addAttribute "$NOTE"  # 添加属性
-            ./chURL "$NOTE_BASENAME" # 修改url
+            NOTE="/Users/zip95297/Repository/BLOG/zjb-blog/source/_posts/$NOTE_BASENAME"
+            /Users/zip95297/Repository/BLOG/zjb-blog/utils/addAttribute "$NOTE" "$NOTE_DATE" # 添加属性
+            /Users/zip95297/Repository/BLOG/zjb-blog/utils/addAttribute "$NOTE"  # 添加属性
+            /Users/zip95297/Repository/BLOG/zjb-blog/utils/chURL "$NOTE_BASENAME" # 修改url
+            echo "----------------------------------------"
             shift 2
             ;;
         # -i|--img)
@@ -47,7 +50,7 @@ while [[ $# -gt 0 ]]; do
         -i|--img)
             IMG="$2"
             NOTE_NAME=$(basename "$NOTE" .md)
-            echo "IMG: $IMG MOVING to source/images/$NOTE_NAME ..."
+            echo "⚠️ COPY IMG: $IMG MOVING to source/images/$NOTE_NAME ..."
             
             TARGET_DIR="/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$NOTE_NAME"
             mkdir -p "$TARGET_DIR"
@@ -55,18 +58,31 @@ while [[ $# -gt 0 ]]; do
             # 从 markdown 中提取 .png/.jpg/.jpeg/.gif 文件名（Obsidian 语法）
             spinner="////----\\\\||||"
             i=0
-            grep -oE '!\[\[[^]]+\.(png|jpg|jpeg|gif)\]\]' "$NOTE" | sed -E 's/!\[\[([^]]+)\]\]/\1/' | while read img_file; do
+
+            count_imgs_file=$(mktemp)
+            echo 0 > "$count_imgs_file"
+            
+            grep -oE '!\[\[[^]]+\.(png|jpg|jpeg|gif)\]\]' "$NOTE_SOURCE" | sed -E 's/!\[\[([^]]+)\]\]/\1/' | while read img_file; do
                 src_path="$IMG/$img_file"
                 if [[ -f "$src_path" ]]; then
+
+                    count_imgs=$(<"$count_imgs_file")
+                    count_imgs=$((count_imgs + 1))
+                    echo "$count_imgs" > "$count_imgs_file"
+
                     cp "$src_path" "$TARGET_DIR/"
+                    count_imgs=$((count_imgs + 1))
                     i=$(( (i + 1) % 16 ))
-                    printf "\rProcessing Copy images: ${spinner:i:1}  "
+                    printf "\r⚠️ Processing Copy images: ${spinner:i:1}  "
                     # echo "✅ Copied: $img_file"
                 else
-                    echo "⚠️ Missing: $img_file"
+                    echo "❌ Missing: $img_file"
                 fi
             done
-
+            echo -e "\n✅ Copied $count_imgs images to $TARGET_DIR"
+            echo "----------------------------------------"
+            /Users/zip95297/Repository/BLOG/zjb-blog/utils/extractImg "$NOTE_BASENAME" # 提取图片
+            rm "$count_imgs_file"
             echo done
             shift 2
             ;;

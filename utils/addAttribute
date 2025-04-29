@@ -7,6 +7,10 @@ Usage() {
     exit 1
 }
 
+if [[ $# -lt 1 ]]; then
+    Usage
+fi
+
 if [[ $# -eq 2 ]]; then
     created_date="$2"
 fi
@@ -15,8 +19,8 @@ fi
 attr_options=( "title" "date" "updated" "math" "tags" "categories" "keywords" "cover" "description" "comments" "top_img" )
 
 # 参数检查
-[[ ! -f $1 ]] && echo "Error: File not found." && exit 1
-[[ "${1##*.}" != "md" ]] && echo "Error: Must be a .md file." && exit 1
+[[ ! -f $1 ]] && echo "ERROR: File not found." && exit 1
+[[ "${1##*.}" != "md" ]] && echo "ERROR: Must be a .md file." && exit 1
 
 file="$1"
 filename=$(basename "$file" .md)
@@ -66,7 +70,7 @@ has_attr() {
 
 # 创建 front-matter（如果没有）
 if ! $has_frontmatter; then
-    echo "⚠️ 文件没有 front-matter，自动添加！"
+    echo "✅ 文件没有 front-matter，自动添加！"
     {
         echo "---"
         echo "title: \"$filename\""
@@ -119,3 +123,4 @@ tail -n +"$((end_line+1))" "$file" >> "$tmpfile"
 mv "$tmpfile" "$file"
 
 echo "✅ 属性补充完成：$file"
+echo "----------------------------------------"

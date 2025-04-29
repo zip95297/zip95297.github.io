@@ -21,7 +21,7 @@ file_path="./source/_posts"
 for file in "$@"; do
     file="${file_path}/$file"
     if [ ! -f "$file" ]; then
-        echo "Error: File '$file' not found"
+        echo "ERROR: File '$file' not found"
         continue
     fi
 
