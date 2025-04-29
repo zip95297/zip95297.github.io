@@ -35,10 +35,10 @@ reward:
   # 打賞案例文本
   text:
   QR_code:
-     - img: /img/wechat.jpg
+     - img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/wxpay.webp
     #   link:
        text: 微信
-     - img: /img/alipay.jpg
+     - img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/alipay.webp
     #   link:
        text: 支付寶
 
