@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Clean up "ffmpeg-*.zip", "ffmpeg" if they exist in the current directory
+rm -f ffmpeg-*.zip ffmpeg
+
+# Download the ffmpeg executable zip
+curl -O https://evermeet.cx/ffmpeg/ffmpeg-6.1.1.zip
+
+# Unzip the downloaded file
+for file in ffmpeg-*.zip; do
+    unzip "$file"
+    break
+done
+
+# Move the executable to /usr/local/bin
+mv ffmpeg /Users/zip95297/CmdShortCut
+
+# Clean up the downloaded zip file
+rm ffmpeg-*.zip

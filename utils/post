@@ -34,13 +34,39 @@ while [[ $# -gt 0 ]]; do
             ./chURL "$NOTE_BASENAME" # 修改url
             shift 2
             ;;
+        # -i|--img)
+        #     IMG="$2"
+        #     NOTE_NAME=$(basename "$NOTE" .md)
+        #     echo "IMG: $IMG MOVING to source/images/$NOTE_NAME ..."
+        #     # 获取 md 的名字 没有.md
+        #     mkdir -p "/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$NOTE_NAME"
+        #     cp "$IMG"/* "/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$NOTE_NAME/"
+        #     echo done
+        #     shift 2
+        #     ;;
         -i|--img)
             IMG="$2"
             NOTE_NAME=$(basename "$NOTE" .md)
             echo "IMG: $IMG MOVING to source/images/$NOTE_NAME ..."
-            # 获取 md 的名字 没有.md
-            mkdir -p "/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$NOTE_NAME"
-            cp "$IMG"/* "/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$NOTE_NAME/"
+            
+            TARGET_DIR="/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$NOTE_NAME"
+            mkdir -p "$TARGET_DIR"
+
+            # 从 markdown 中提取 .png/.jpg/.jpeg/.gif 文件名（Obsidian 语法）
+            spinner="////----\\\\||||"
+            i=0
+            grep -oE '!\[\[[^]]+\.(png|jpg|jpeg|gif)\]\]' "$NOTE" | sed -E 's/!\[\[([^]]+)\]\]/\1/' | while read img_file; do
+                src_path="$IMG/$img_file"
+                if [[ -f "$src_path" ]]; then
+                    cp "$src_path" "$TARGET_DIR/"
+                    i=$(( (i + 1) % 16 ))
+                    printf "\rProcessing Copy images: ${spinner:i:1}  "
+                    # echo "✅ Copied: $img_file"
+                else
+                    echo "⚠️ Missing: $img_file"
+                fi
+            done
+
             echo done
             shift 2
             ;;

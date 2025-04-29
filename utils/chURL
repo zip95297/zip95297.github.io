@@ -40,7 +40,7 @@ for file in "$@"; do
     echo "## $filename"
 
     count=0
-    spinner="/-\|"
+    spinner="//--\\||"
     i=0
     # Read the file line by line
     while IFS= read -r line; do
@@ -48,12 +48,16 @@ for file in "$@"; do
         while [[ "$line" =~ !\[\[([^\]]+)\]\] ]]; do
             image="${BASH_REMATCH[1]}"
             encoded_image=$(url_encode "$image")
+
+            # 后缀换成 .webp
+            encoded_image="${encoded_image%.*}.webp"
+            
             origin="![[${BASH_REMATCH[1]}]]"  # Original pattern to be replaced
             replacement="![]($GITHUB_BASE/$encoded_filename/$encoded_image?raw=true)"
 
             # Display a spinner while processing
-            i=$(( (i + 1) % 4 ))
-            printf "\rProcessing: ${spinner:i:1}  "
+            i=$(( (i + 1) % 8 ))
+            printf "\rProcessing change URL: ${spinner:i:1}  "
 
             # # Debugging information
             # echo "Image: $image"
