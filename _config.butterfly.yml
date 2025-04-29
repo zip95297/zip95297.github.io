@@ -11,12 +11,91 @@ nav:
   # 是否固定導航欄
   fixed: false
 
+# 首页文章布局
+index_layout: 2
 # 加载动画
 preloader: true
 # 是否顯示返回頂部按鈕
 back2top: true
 # 首页图片
-index_img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/profile.webp?raw=true
+index_img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/bg2.webp
+# 背景图
+background: url(https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/bg2.webp)
+# favicon 浏览器的图标
+favicon: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/profile.webp?raw=true
+# 归档页 的图片
+archive_img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/bg1.webp
+# 分类页 的图片
+category_img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/bg4.webp
+
+# 贊助/打賞
+reward:
+  # 是否啟用打賞
+  enable: false
+  # 打賞案例文本
+  text:
+  QR_code:
+     - img: /img/wechat.jpg
+    #   link:
+       text: 微信
+     - img: /img/alipay.jpg
+    #   link:
+       text: 支付寶
+
+
+作者: Jerry
+連結: https://butterfly.js.org/posts/4aa8abbe/
+來源: Butterfly
+版權屬於作者所有。商業用途請聯絡作者獲得授權，非商業用途請註明出處。
+
+# 侧边栏
+aside:
+  enable: true
+  hide: false
+  button: true
+  mobile: false     # display on mobile
+  position: right   # left or right，决定侧边栏在右边还是在左边
+  card_author:
+    enable: true
+    description: 一个人
+    button:
+      enable: true
+      icon: fab fa-github
+      text: 捞的一的Github主页
+      link: https://github.com/zip95297
+  card_announcement: 
+    enable: true
+    content: 最近没什么要分享的
+  card_recent_post:
+    # 是否顯示最近文章卡片
+    enable: true
+    # 顯示文章數量，0 表示顯示所有
+    limit: 2
+  card_archives:
+    # 是否顯示歸檔卡片
+    enable: false
+
+# 頁腳設置
+footer:
+  owner:
+    # 是否啟用所有者顯示
+    enable: true
+    # 網站創建年份
+    since: 2002
+  # 自定義文本
+  custom_text: 只有这么点东西
+  # 主題和框架的版權聲明
+  copyright: false
+
+social:
+   fab fa-github: https://github.com/zip95297 || Github
+   fas fa-envelope: mailto:zip95297@gmail.com || Email
+
+
+
+
+
+
 
 menu:
   主页: / || fas fa-home
@@ -75,7 +154,7 @@ subtitle:
     - 招租🪧广告位
 #    - 广告位🪧招租
 
-# 设置一下头像背景之类的
+# 头像
 avatar:
   img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/profile.webp?raw=true
   effect: false  # 是否启用头像旋转效果（可选）
