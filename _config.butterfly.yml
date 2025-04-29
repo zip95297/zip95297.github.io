@@ -63,3 +63,16 @@ subtitle:
 avatar:
   img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/profile.png?raw=true
   effect: false  # 是否启用头像旋转效果（可选）
+
+# 下面设置一下 对数学公式的渲染
+math:
+  enable: true
+  per_page: true     # ← 开启每篇文章单独控制
+  engine: mathjax    # 或者 katex
+  mathjax:
+    src: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  katex:
+    css: https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css
+    js: https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js
+
+

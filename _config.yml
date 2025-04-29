@@ -118,6 +118,17 @@ ignore:
 #theme: landscape
 theme: butterfly
 
+# 支持公式渲染
+markdown:
+  render:
+    html: true
+    xhtmlOut: true
+    breaks: true
+    linkify: true
+    typographer: true
+  plugins:
+    - markdown-it-katex
+
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
