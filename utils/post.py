@@ -29,7 +29,7 @@ class NoteSelector:
             # 先显示目录，再显示文件
             dirs = sorted([i for i in items if os.path.isdir(os.path.join(dir_path, i))])
             # 忽略 个人 文件夹
-            dirs = [d for d in dirs if not d.startswith('个人')]
+            dirs = [d for d in dirs if not d.startswith('A个人')]
             files = sorted([i for i in items if i.endswith('.md')])
             
             for d in dirs:
