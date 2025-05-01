@@ -158,7 +158,7 @@ for attr in "${attr_options[@]}"; do
             echo -n "请输入 '$attr' 的值："
             read value
             write_info "categories" "$value"
-        elif [[ "$attr" == "password" ]]
+        elif [[ "$attr" == "password" ]]; then
             echo -n "请输入文章密码 '$attr' 的值：输入 d 就用生日"            
             read value
             if [[ "$value" == "d" ]]; then
