@@ -2,7 +2,7 @@
 title: "Aligning Cyber Space with Physical World  A  Comprehensive Survey on Embodied AI"
 date: 2024-11-02 04:25:20
 updated: 2025-05-01 17:56:39
-math: true
+mathjax: true
 categories: 深度学习
 tags: 
     - 深度学习

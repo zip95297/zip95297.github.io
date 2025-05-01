@@ -39,7 +39,7 @@ write_info(){
 }
 
 # 属性列表
-attr_options=( "title" "date" "updated" "math" "tags" "categories" "keywords" "cover" "description" "comments" "top_img" )
+attr_options=( "title" "date" "updated" "mathjax" "tags" "categories" "keywords" "cover" "description" "comments" "top_img" )
 
 # 参数检查
 [[ ! -f $1 ]] && echo "ERROR: File not found." && exit 1
@@ -129,7 +129,7 @@ for attr in "${attr_options[@]}"; do
             value=$(date '+%Y-%m-%d %H:%M:%S')
         elif [[ "$attr" == "comments" ]]; then
             value=true
-        elif [[ "$attr" == "math" ]]; then
+        elif [[ "$attr" == "mathjax" ]]; then
             value=true
         elif [[ "$attr" == "tags" ]]; then
             echo -n "请输入 '$attr' 的值：可以多个 用空格分隔："

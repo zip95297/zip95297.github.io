@@ -2,7 +2,7 @@
 title: SwinIR 代码阅读
 date: 2025-03-16 15:32:09
 updated: 2025-04-30 00:42:24
-math: true
+mathjax: true
 tags: 
     - 深度学习
     - ViT
