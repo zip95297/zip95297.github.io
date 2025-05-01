@@ -39,7 +39,7 @@ write_info(){
 }
 
 # 属性列表
-attr_options=( "title" "date" "updated" "mathjax" "tags" "categories" "keywords" "cover" "description" "comments" "top_img" )
+attr_options=( "title" "date" "updated" "mathjax" "tags" "categories" "keywords" "cover" "description" "comments" "top_img" "password" "message")
 
 # 参数检查
 [[ ! -f $1 ]] && echo "ERROR: File not found." && exit 1
@@ -119,7 +119,9 @@ for attr in "${attr_options[@]}"; do
     if has_attr "$attr"; then
         continue
     fi
-
+    if [[ "$attr" == "message" ]]; then
+        echo "message 属性是密码提示"
+    fi
     echo -n "是否添加属性 '$attr'? (y/n): "
     read ans
     if [[ "$ans" == "y" || "$ans" == "Y" ]]; then
@@ -145,7 +147,6 @@ for attr in "${attr_options[@]}"; do
             for tag in ${valueList[@]}; do
                 write_info "tags" "$tag"
             done
-
             # 转换成 - value \n - value 1个空格做分隔
             value=$(echo " $value blog" | sed 's/ /\n    - /g' | sed '$d')
         elif [[ "$attr" == "categories" ]]; then
@@ -157,6 +158,12 @@ for attr in "${attr_options[@]}"; do
             echo -n "请输入 '$attr' 的值："
             read value
             write_info "categories" "$value"
+        elif [[ "$attr" == "password" ]]
+            echo -n "请输入文章密码 '$attr' 的值：输入 d 就用生日"            
+            read value
+            if [[ "$value" == "d" ]]; then
+                value="20020820"
+            fi
         else
             echo -n "请输入 '$attr' 的值："
             read value
