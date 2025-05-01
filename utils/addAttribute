@@ -15,6 +15,29 @@ if [[ $# -eq 2 ]]; then
     created_date="$2"
 fi
 
+# 获取现有的 tags 和 categories 存在于文件 ./value/tags 和 ./value/categories 中 返回一个list
+get_info(){
+    local index=$1 # tags or categories
+    local file="/Users/zip95297/Repository/BLOG/zjb-blog/utils/value/$index"
+    local list=()
+    while IFS= read -r line; do
+        list+=("$line")
+    done < "$file"
+    echo "${list[@]}"
+}
+
+# 写入 tags 和 categories 到文件 ./value/tags 和 ./value/categories 中
+write_info(){
+    local index=$1 # tags or categories
+    local value=$2
+    local file="/Users/zip95297/Repository/BLOG/zjb-blog/utils/value/$index"
+    # 判断是否已经存在
+    if grep -q "$value" "$file"; then
+        return
+    fi
+    echo "$value" >> "$file"
+}
+
 # 属性列表
 attr_options=( "title" "date" "updated" "math" "tags" "categories" "keywords" "cover" "description" "comments" "top_img" )
 
@@ -108,8 +131,32 @@ for attr in "${attr_options[@]}"; do
             value=true
         elif [[ "$attr" == "math" ]]; then
             value=true
-        # elif [[ "$attr" == "tags" ]]; then
-        # elif [[ "$attr" == "categories" ]]; then
+        elif [[ "$attr" == "tags" ]]; then
+            echo -n "请输入 '$attr' 的值：可以多个 用空格分隔："
+            get_info "tags"
+            echo "可选的 tags 有："
+            for tag in $(get_info "tags"); do
+                echo "	- $tag"
+            done
+            echo -n "请输入 tags 的值（多个用空格分隔）："
+            read value
+            # 按空格分隔 用于写回 转换成数组 逐个写
+            valueList=($value)
+            for tag in ${valueList[@]}; do
+                write_info "tags" "$tag"
+            done
+
+            # 转换成 - value \n - value 1个空格做分隔
+            value=$(echo " $value blog" | sed 's/ /\n    - /g' | sed '$d')
+        elif [[ "$attr" == "categories" ]]; then
+            get_info "categories"
+            echo "已经存在的 categories 有："
+            for category in $(get_info "categories"); do
+                echo "	- $category"
+            done
+            echo -n "请输入 '$attr' 的值："
+            read value
+            write_info "categories" "$value"
         else
             echo -n "请输入 '$attr' 的值："
             read value

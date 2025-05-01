@@ -3,8 +3,12 @@ title: SwinIR 代码阅读
 date: 2025-03-16 15:32:09
 updated: 2025-04-30 00:42:24
 math: true
-categories: 超分重建
-tags: 深度学习
+tags: 
+    - 深度学习
+    - ViT
+    - SwinTransformer
+categories: 深度学习
+description: 阅读SwinIR论文，在BasicSR详细阅读了一下SwinIR的代码
 ---
 
 
