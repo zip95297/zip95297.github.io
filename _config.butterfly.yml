@@ -156,6 +156,10 @@ post_copyright:
   # 许可证链接
   license_url: https://creativecommons.org/licenses/by-nc-sa/4.0/
 
+# 滚动状态百分比
+rightside_scroll_percent: true
+# 阅读模式按钮
+readmode: true
 
 post_meta:
   # Home Page
