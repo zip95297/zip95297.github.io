@@ -123,7 +123,9 @@ markdown:
   # 一级目录无法跳转
   anchors:
     level: 1
-    permalink: true
+    # 这个是给锚点显示图标
+    permalink: false
+
   render:
     html: true
     xhtmlOut: true

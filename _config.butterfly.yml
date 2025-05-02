@@ -16,6 +16,20 @@ pretty_urls:
   trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
   trailing_html: true # Set to false to remove trailing '.html' from permalinks
 
+# 谷歌分析统计
+google_analytics: G-MJK71R0R14
+
+# 字数统计
+wordcount:
+  enable: true
+  # Display the word count of the article in post meta
+  post_wordcount: true
+  # Display the time to read the article in post meta
+  min2read: true
+  # Display the total word count of the website in aside's webinfo
+  total_wordcount: true
+
+
 # 弹窗
 snackbar:
   enable: true
@@ -59,6 +73,18 @@ category_img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/sourc
 tag_img: https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/profile/bg3.webp
 # 灯箱效果
 lightbox: medium_zoom
+
+# 美化页面显示
+beautify:
+  enable: false
+  field: site # site/post
+  title-prefix-icon: '\f10d' # '\f0c1'  这个在这个网站上找：https://fontawesome.com/search?ip=classic&s=solid&o=r
+  title-prefix-icon-color: '#3D4E67'
+
+# 黑色遮罩
+mask:
+  header: true
+  footer: true
 
 # 贊助/打賞
 reward:
@@ -124,6 +150,12 @@ post_meta:
     tags: true
     label: true
 
+# 錨點設置
+anchor:
+  # 滾動時，URL 將根據標題 ID 更新
+  auto_update: false
+  # 點擊標題滾動並更新錨點
+  click_to_scroll: true
 
 # 侧边栏
 aside:
