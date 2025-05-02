@@ -1,0 +1,167 @@
+---
+title: "ssh"
+date: 2025-05-03 01:24:21
+updated: 2025-05-03 01:24:44
+tags: 
+    - ssh
+    - 常用软件
+    - 网络
+categories: 常用软件
+description: 对SSH命令的用发的解释，方便使用时候查询
+---
+# SSH - Secure Shell Protocol
+
+## SSH OPTION 总览
+
+`ssh`  最常用的 的连接方式就是 `ssh user@ip`  端口不指定的话默认是 22 ，或者通过 配置 `.ssh/config` 进行登录。
+
+### 常用的
+
+`ssh` 的 常用参数有下面这些：
+```shell
+# 指定连接哪个端口
+-p <Port>
+
+# 显示 ssh 连接时的详细输出 
+-v
+# 如果使用 -J 参数 可以用 -vv 详细两层详细信息
+
+# 跳板机 这个下面详细讲吧
+-J
+
+# 允许 X11 转发，可以把 远程机器的图形程序 通过ssh 传输到本地
+# 条件：远程支持 X11 ,本地有 X server (跟系统有关)
+-X
+# 禁止 X11 转发
+-x
+
+# 直接指定 登录的目标用户
+-l
+ssh -l user IP
+
+# 指定从哪个 本地IP 发起连接 （本地有多个网卡-IP）
+-b <local IP addr>
+
+# 强制给 给 远程命令分配一个 伪终端
+# 例如 ssh Target "vim <file>" 如果没有分配终端就用不了
+-t
+# 强制 不分配 peseudo tty
+-T
+
+# 在远程机器上执行命令
+ssh REMOTE "shell"
+```
+
+### 转发相关
+
+和转发相关的有：
+```shell
+# 本地某个端口 转发到 远端指定机器的指定端口
+# 本地转发 下面细说 下面这两个也需要 指定 host: user@IP
+-L <local port>:<host addr>:<host port>
+
+# 远端的某个端口 转发到 本地的指定端口
+-R <local port>:<host addr>:<host port>
+
+# 认证后 把 ssh 进程 放在后台
+# 这个一般搭配 端口转发 或者 传入让 远程机器执行的 命令
+-f 
+
+# 允许 允许非本机 通过局域网 连接本地转发的端口 大概是这样
+-g
+
+# 让转发仅转发 不在远程执行命令
+# 如果没有这个 转发会在远程打开 远程shell会话
+-N
+```
+
+### 基本没用过
+
+下面是我目前基本没用过的参数，之后遇到了再补充：
+```shell
+# 启用压缩 减少数据传输量
+-C
+
+# quiet MUTE所有的 ssh 警告和诊断信息
+-q
+
+# 指定 私钥路径 一般在 ~/config/.ssh
+-i <identity_file>
+
+# 开启 认证代理 转发功能 可以理解成把私钥转发
+# 通过这个 可以先用私钥连到 A（没有这个私钥） 然后 可以直接免密到 B（有对应公钥）
+-A
+# 关闭 认证代理转发
+
+# 指定 用户级配置 config 如果开了这个 系统配置 /etc/ssh/ssh_config 会被忽略
+# 默认是 ~/.ssh/config
+-F <config file>
+```
+
+## SSH -J 跳板机
+
+`-J` 参数可以让通过 跳板机登录到目标主机：例如 我想登录目标机器 `target` 但是要连接的 `target` 我在自己的网络环境中无法访问， 我可以直接访问的是 `jump` ，如果 `jump` 可以访问 `target`，那么就可以通过下面的命令进行连接：
+```shell
+ssh -J user_A@jump.com[:port] user_B@target.com [-p <Target Port>]
+# 其中 -J 的使用方法如下：
+-J [user@]jump_host[:port]
+```
+上面这个命令等效为： `ssh jump` 然后在 `jump` 上：`ssh target` 
+
+> 这个命令也支持 多个跳板：
+	`ssh -J user1@jump1,user2@jump2 user@target`
+
+## SSH 端口转发
+
+`ssh -L/-R <port>:<host addr>:<host port> HOST` 后面的参数相当于在 `port` 前面隐含了 本地的地址。这个命令建立了一个 ssh隧道 来对网络上的流量进行转发（Forwarding）。
+
+这个还没验证过：默认情况下，SSH 端口转发可能**只允许来自 SSH 客户端本机的连接**，如果想允许外面的 可以在第一个 port 前 加上 0.0.0.0
+
+> 访问某个端口 就会给某个端口发送 请求 的流量，通过转发 可以把 流量 从一个 port 转发到另一个 port
+
+### 本地转发 - 访问本地的流量 F 远程
+
+`ssh -L` 用于把 本地的端口 的流量 转发到 远程主机的端口 可以通过本地的某个端口 访问remote的某个端口（在ssh隧道上），例如： 这个 remote addr 可以是 localhost 也可以是别的 ip （如果某个服务只开在10.10.5.4 ,那么就不用 localhost 而是用 10.10.5.4）
+```shell
+ssh -L 9999:<remote addr>:8888 user@remote_host
+```
+
+通过这个命令：
+- 本地会打开 9999 端口 
+- 建立转发：
+	所有发往本地 9999 端口的流量 会通过 ssh 隧道 转发到远程 remote 上的 `remote addr:9999`
+- 打开一个shell（如果不像打开shell 可以用 -f 在后台运行，可以使用 -g 允许局域网内的连接）
+
+### 远程转发 - 访问远程的流量 F 本地
+
+`ssh -R` 用于把 远程端口 的流量 转发到 本地的某个端口上。也就是允许 远程机器访问本地的服务。
+```shell
+ssh -R 6666:<local addr>:22 user@remote_host
+```
+
+通过这个命令：
+- 远程上打开 6666 端口
+- 所有发往 远程 6666 的流量都被转发到 本地 的 22
+- 打开一个shell
+
+> 这两个命令 的第一项 隐含了 R的ip 或者 L的ip
+## 配置文件
+
+在 用户目录下 `~/.ssh/config` 这是 通过 `ssh`  访问远程机器时候读取的文件 配置连接远程机器时候的各种参数，可以通过 `ssh Host` 来代替 `ssh` 中的长串参数传递。
+
+一般来说 通过 `ssh user@hostname -p Port` 连接主机 也可以用下面的配置 
+```yaml
+Host <别名>
+  Hostname <IP或者域名>                     
+  User <要登录的用户>                        
+  Port <要连接的端口>                                  
+  PreferredAuthentications <认证方式> # 常用的有 password publickey 可以都选（按顺序）
+  IdentityFile <私钥位置>
+
+# 还没有用过
+  ForwardAgent <是否允许转发> yes / no  # 对应前面的 -A 参数
+  ProxyCommand ssh -q -W %h:%p gateway.example.com # 允许通过 ssh 命令 转发ssh连接
+  LocalForward 8080 localhost:80 # 设置转发
+  RemoteForward 9090 localhost:90 
+  Compression yes # 压缩流量 用于节省带宽
+```

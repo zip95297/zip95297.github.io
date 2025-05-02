@@ -1,97 +1,106 @@
 #!/bin/bash
 
 Usage() {
-    echo "Usage: $0 -n|--note <md file path> [-i|--img <image file path>]"
-    echo "       $0 -h|--help"
-    echo "this script is used to post a note [with imgs to blog dir]"
-    echo "execute this script in the blog root dir"
-    exit 1
+  echo "Usage: $0 -n|--note <md file path in obsidian> [-i|--img <image file path in obsidian>]"
+  echo "       $0 -h|--help"
+  echo "this script is used to post a note [with imgs to blog dir]"
+  echo "execute this script in the blog root dir"
+  exit 1
 }
 
 # 解析参数
 if [[ $# -eq 0 ]]; then
-    Usage
+  Usage
 fi
 
 while [[ $# -gt 0 ]]; do
-    case $1 in
-        -n|--note)
-            NOTE="$2"
-            NOTE_SOURCE=$NOTE
-            # 检查是不是md结尾的 文件
-            if [[ ! -f $NOTE || "${NOTE##*.}" != "md" ]]; then
-                echo "ERROR: The file must be a markdown file."
-                exit 1
-            fi
+  case $1 in
+  -n | --note)
+    NOTE="$2"
+    NOTE_SOURCE=$NOTE
+    # 检查是不是md结尾的 文件
+    if [[ ! -f $NOTE || "${NOTE##*.}" != "md" ]]; then
+      echo "ERROR: The file must be a markdown file."
+      exit 1
+    fi
 
-            # 获取文件是什么时候创建的
-            NOTE_DATE=$(stat -f %Sm "$NOTE")
-            NOTE_DATE=$(date -j -f "%b %d %H:%M:%S %Y" "$NOTE_DATE" "+%Y-%m-%d %H:%M:%S")
-            NOTE_BASENAME=$(basename "$NOTE")
-            echo "⚠️ COPY NOTE: $NOTE MOVING to source/_post ..."
-            cp "$NOTE" /Users/zip95297/Repository/BLOG/zjb-blog/source/_posts
-            NOTE="/Users/zip95297/Repository/BLOG/zjb-blog/source/_posts/$NOTE_BASENAME"
-            /Users/zip95297/Repository/BLOG/zjb-blog/utils/addAttribute "$NOTE" "$NOTE_DATE" # 添加属性
-            /Users/zip95297/Repository/BLOG/zjb-blog/utils/addAttribute "$NOTE"  # 添加属性
-            /Users/zip95297/Repository/BLOG/zjb-blog/utils/chURL "$NOTE_BASENAME" # 修改url
-            echo "----------------------------------------"
-            shift 2
-            ;;
-        # -i|--img)
-        #     IMG="$2"
-        #     NOTE_NAME=$(basename "$NOTE" .md)
-        #     echo "IMG: $IMG MOVING to source/images/$NOTE_NAME ..."
-        #     # 获取 md 的名字 没有.md
-        #     mkdir -p "/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$NOTE_NAME"
-        #     cp "$IMG"/* "/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$NOTE_NAME/"
-        #     echo done
-        #     shift 2
-        #     ;;
-        -i|--img)
-            IMG="$2"
-            NOTE_NAME=$(basename "$NOTE" .md)
-            echo "⚠️ COPY IMG: $IMG MOVING to source/images/$NOTE_NAME ..."
-            
-            TARGET_DIR="/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$NOTE_NAME"
-            mkdir -p "$TARGET_DIR"
+    # 获取文件是什么时候创建的
+    NOTE_DATE=$(stat -f %Sm "$NOTE")
+    NOTE_DATE=$(date -j -f "%b %d %H:%M:%S %Y" "$NOTE_DATE" "+%Y-%m-%d %H:%M:%S")
+    NOTE_BASENAME=$(basename "$NOTE")
+    echo "⚠️ COPY NOTE: $NOTE MOVING to source/_post ..."
+    cp "$NOTE" /Users/zip95297/Repository/BLOG/zjb-blog/source/_posts
+    NOTE="/Users/zip95297/Repository/BLOG/zjb-blog/source/_posts/$NOTE_BASENAME"
+    /Users/zip95297/Repository/BLOG/zjb-blog/utils/addAttribute "$NOTE" "$NOTE_DATE" # 添加属性
+    /Users/zip95297/Repository/BLOG/zjb-blog/utils/addAttribute "$NOTE"              # 添加属性
+    /Users/zip95297/Repository/BLOG/zjb-blog/utils/chURL "$NOTE_BASENAME"            # 修改url
+    echo "----------------------------------------"
+    shift 2
+    ;;
+  # -i|--img)
+  #     IMG="$2"
+  #     NOTE_NAME=$(basename "$NOTE" .md)
+  #     echo "IMG: $IMG MOVING to source/images/$NOTE_NAME ..."
+  #     # 获取 md 的名字 没有.md
+  #     mkdir -p "/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$NOTE_NAME"
+  #     cp "$IMG"/* "/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$NOTE_NAME/"
+  #     echo done
+  #     shift 2
+  #     ;;
+  -i | --img)
+    IMG="$2"
+    NOTE_NAME=$(basename "$NOTE" .md)
+    echo "⚠️ COPY IMG: $IMG MOVING to source/images/$NOTE_NAME ..."
 
-            # 从 markdown 中提取 .png/.jpg/.jpeg/.gif 文件名（Obsidian 语法）
-            spinner="////----\\\\||||"
-            i=0
+    TARGET_DIR="/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$NOTE_NAME"
+    mkdir -p "$TARGET_DIR"
 
-            count_imgs_file=$(mktemp)
-            echo 0 > "$count_imgs_file"
-            
-            grep -oE '!\[\[[^]]+\.(png|jpg|jpeg|gif)\]\]' "$NOTE_SOURCE" | sed -E 's/!\[\[([^]]+)\]\]/\1/' | while read img_file; do
-                src_path="$IMG/$img_file"
-                if [[ -f "$src_path" ]]; then
+    # 从 markdown 中提取 .png/.jpg/.jpeg/.gif 文件名（Obsidian 语法）
+    spinner="////----\\\\||||"
+    i=0
 
-                    count_imgs=$(<"$count_imgs_file")
-                    count_imgs=$((count_imgs + 1))
-                    echo "$count_imgs" > "$count_imgs_file"
+    count_imgs_file=$(mktemp)
+    echo 0 >"$count_imgs_file"
 
-                    cp "$src_path" "$TARGET_DIR/"
-                    count_imgs=$((count_imgs + 1))
-                    i=$(( (i + 1) % 16 ))
-                    printf "\r⚠️ Processing Copy images: ${spinner:i:1}  "
-                    # echo "✅ Copied: $img_file"
-                else
-                    echo "❌ Missing: $img_file"
-                fi
-            done
-            echo -e "\n✅ Copied $count_imgs images to $TARGET_DIR"
-            echo "----------------------------------------"
-            /Users/zip95297/Repository/BLOG/zjb-blog/utils/extractImg "$NOTE_BASENAME" # 提取图片
-            rm "$count_imgs_file"
-            echo done
-            shift 2
-            ;;
-        -h|--help)
-            Usage
-            ;;
-        *)
-            echo "Unknown option: $1"
-            Usage
-            ;;
-    esac
+    grep -oE '!\[\[[^]]+\.(png|jpg|jpeg|gif)\]\]' "$NOTE_SOURCE" | sed -E 's/!\[\[([^]]+)\]\]/\1/' | while read img_file; do
+      src_path="$IMG/$img_file"
+      if [[ -f "$src_path" ]]; then
+
+        count_imgs=$(<"$count_imgs_file")
+        count_imgs=$((count_imgs + 1))
+        echo "$count_imgs" >"$count_imgs_file"
+
+        cp "$src_path" "$TARGET_DIR/"
+        count_imgs=$((count_imgs + 1))
+        i=$(((i + 1) % 16))
+        printf "\r⚠️ Processing Copy images: ${spinner:i:1}  "
+        # echo "✅ Copied: $img_file"
+      else
+        echo "❌ Missing: $img_file"
+      fi
+    done
+
+    # 检查 如果没有图片就删除
+    num=$(ls "$TARGET_DIR" | wc -l)
+    if [[ $num -eq 0 ]]; then
+      rm -rf "$TARGET_DIR"
+      echo "✅ No images found, 🗑 deleted: $TARGET_DIR"
+    fi
+
+    echo -e "\n✅ Copied $count_imgs images to $TARGET_DIR"
+    echo "----------------------------------------"
+    /Users/zip95297/Repository/BLOG/zjb-blog/utils/extractImg "$NOTE_BASENAME" # 提取图片
+    rm "$count_imgs_file"
+    echo done
+    shift 2
+    ;;
+  -h | --help)
+    Usage
+    ;;
+  *)
+    echo "Unknown option: $1"
+    Usage
+    ;;
+  esac
 done
+
