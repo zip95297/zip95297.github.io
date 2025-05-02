@@ -121,6 +121,8 @@ for attr in "${attr_options[@]}"; do
     fi
     if [[ "$attr" == "message" ]]; then
         echo "message 属性是密码提示"
+    elif [[ "$attr" == "comments" ]]; then
+        echo "comments 属性是评论区（默认为关）输入y就是开"
     fi
     echo -n "是否添加属性 '$attr'? (y/n): "
     read ans
@@ -169,6 +171,8 @@ for attr in "${attr_options[@]}"; do
             read value
         fi
         echo "$attr: $value" >> "$tmpfile"
+    elif [[ "$attr" == "comments" ]]; then
+        echo "$attr: false" >> "$tmpfile"
     fi
 done
 

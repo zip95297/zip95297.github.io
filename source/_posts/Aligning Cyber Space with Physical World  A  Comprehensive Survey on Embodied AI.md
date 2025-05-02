@@ -10,6 +10,7 @@ tags:
     - 论文阅读
     - 综述
 description: 阅读具身智能的一篇综述，记录一下文章主要内容
+comments: true
 ---
 这是一篇Embodied AI的综述文章，介绍了Embodied AI的几个研究方向以及现状。
 

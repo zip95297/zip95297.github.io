@@ -7,6 +7,7 @@ tags:
     - 常用软件
     - 终端命令
 categories: 终端相关
+comments: false
 ---
 # 写在前面
 

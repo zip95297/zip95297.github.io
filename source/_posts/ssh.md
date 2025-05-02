@@ -8,6 +8,7 @@ tags:
     - 网络
 categories: 终端相关
 description: 对SSH命令的用法的解释，方便使用时候查询
+comments: false
 ---
 # SSH - Secure Shell Protocol
 
