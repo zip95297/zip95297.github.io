@@ -53,7 +53,7 @@ git checkout -b <new-branch>
 git checkout -b <new-branch>
 ```
 
-把文件切换到 指定的 commit-id 的状态 这个可以用 [diff](##git-diff)
+把文件切换到 指定的 commit-id 的状态 这个可以用 [diff](#git-diff)
 ```shell
 git checkout <commit-hash> -- <file-path>
 ```
