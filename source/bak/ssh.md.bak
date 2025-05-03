@@ -1,13 +1,13 @@
 ---
-title: "ssh"
+title: "SSH 命令的详细使用"
 date: 2025-05-03 01:24:21
-updated: 2025-05-03 01:24:44
-tags: 
-    - ssh
+updated: 2025-05-04 04:48:31
+tags:
     - 常用软件
+    - ssh
     - 网络
-categories: 常用软件
-description: 对SSH命令的用发的解释，方便使用时候查询
+categories: 终端相关
+comments: false
 ---
 # SSH - Secure Shell Protocol
 

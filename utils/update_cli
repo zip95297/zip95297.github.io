@@ -1,0 +1,114 @@
+#!/bin/bash
+Usage() {
+  echo "Usage: $0 -n|--note <md file name w/o .md in post>"
+  echo "       $0 -h|--help"
+  echo "this script is used to update a note from obsidian to blog dir"
+  echo "execute this script in the blog root dir"
+  echo "----------------------------------------"
+  ls /Users/zip95297/Repository/BLOG/zjb-blog/source/_posts
+  exit 1
+}
+
+# 解析参数
+if [[ $# -eq 0 ]]; then
+  Usage
+fi
+
+if [[ $1 == "-h" || $1 == "--help" ]]; then
+  Usage
+fi
+
+if [[ $1 != "-n" && $1 != "--note" ]]; then
+  echo "ERROR: Unknown option: $1"
+  Usage
+fi
+
+filename="$(basename "$2")"
+# 如果以 .md 结尾，去掉后缀
+if [[ $filename == *.md ]]; then
+  filename="${filename%.md}"
+fi
+
+# 获取blog 中的Note path 和 img path
+NOTE="/Users/zip95297/Repository/BLOG/zjb-blog/source/_posts/$filename.md"
+IMG="/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$filename"
+
+# 检查文件是否存在
+if [[ ! -f "$NOTE" ]]; then
+  echo "ERROR: The file does not exist: $NOTE"
+  exit 2
+fi
+# 备份一个
+cp "$NOTE" "$NOTE.bak.update"
+mv "$NOTE.bak.update" "/Users/zip95297/Repository/BLOG/zjb-blog/source/bak" 
+if [[ ! -d $IMG ]]; then
+  IMG=""
+fi
+
+# 空格转义
+filename="${filename// /\\ }"
+NOTE="${NOTE// /\\ }"
+IMG="${IMG// /\\ }"
+
+# 获取 obsidian 中的Note path
+obsidian_path="/Users/zip95297/Repository/DocumentLibrary/ObsidianNote"
+obsidian_note_path=$(find $obsidian_path -name "$filename.md" -type f)
+# 同级目录下的imgs或者img
+obsidian_img_path=$(dirname "$obsidian_note_path")/imgs
+if [[ ! -d $obsidian_img_path ]]; then
+  obsidian_img_path=$(dirname "$obsidian_note_path")/img
+fi
+if [[ ! -d $obsidian_img_path ]]; then
+  obsidian_img_path=""
+fi
+
+# 文件更新：保留md属性 然后对内容直接更新
+note_new=$(mktemp)
+# 读取原笔记中的属性 两个 --- 之间
+awk '/^---/{if (p) {exit} else {p=1}}; p' "$NOTE" >"$note_new"
+echo "---" >>"$note_new"
+# 把obsidian的笔记复制过来并覆盖
+cat "$obsidian_note_path" >>"$note_new"
+cat "$note_new" > "$NOTE"
+/Users/zip95297/Repository/BLOG/zjb-blog/utils/chURL "$filename.md" # 修改url
+rm -f "$note_new"
+
+# 处理图片
+if [[ $obsidian_img_path != "" ]]; then
+    # 检查图片文件夹是否存在
+    TARGET_DIR="/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$filename"
+    if [[ ! -d $TARGET_DIR ]]; then
+      mkdir -p "$TARGET_DIR"
+    fi
+    rm -f "$TARGET_DIR"/*
+      # 从 markdown 中提取 .png/.jpg/.jpeg/.gif 文件名（Obsidian 语法）
+
+    spinner="////----\\\\||||"
+    i=0
+    count_imgs_file=$(mktemp)
+    echo 0 >"$count_imgs_file"
+
+    grep -oE '!\[\[[^]]+\.(png|jpg|jpeg|gif)\]\]' "$obsidian_note_path" | sed -E 's/!\[\[([^]]+)\]\]/\1/' | while read img_file; do
+      src_path="$obsidian_img_path/$img_file"
+      if [[ -f "$src_path" ]]; then
+        count_imgs=$(<"$count_imgs_file")
+        count_imgs=$((count_imgs + 1))
+        echo "$count_imgs" >"$count_imgs_file"
+        cp "$src_path" "$TARGET_DIR/"
+        count_imgs=$((count_imgs + 1))
+        i=$(((i + 1) % 16))
+        printf "\r⚠️ Processing Copy images: ${spinner:i:1}  "
+        # echo "✅ Copied: $img_file"
+      else
+        echo "❌ Missing: $img_file"
+      fi
+    done
+    count_imgs=$(<"$count_imgs_file")
+    if [[ $count_imgs -eq 0 ]]; then
+      rm -rf "$TARGET_DIR"
+    else
+      echo -e "\n✅ Copied $count_imgs images to $TARGET_DIR"
+    fi
+fi
+echo "✅ Updated note: $NOTE"
+

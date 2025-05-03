@@ -165,3 +165,4 @@ Host <别名>
   RemoteForward 9090 localhost:90 
   Compression yes # 压缩流量 用于节省带宽
 ```
+
