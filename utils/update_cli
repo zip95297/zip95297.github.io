@@ -108,6 +108,7 @@ if [[ $obsidian_img_path != "" ]]; then
       rm -rf "$TARGET_DIR"
     else
       echo -e "\n✅ Copied $count_imgs images to $TARGET_DIR"
+      /Users/zip95297/Repository/BLOG/zjb-blog/utils/extractIMG "$filename"
     fi
 fi
 echo "✅ Updated note: $NOTE"

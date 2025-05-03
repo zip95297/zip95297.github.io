@@ -24,7 +24,7 @@ if [[ ! -d "$TARGET_DIR" ]]; then
     exit 1
 fi
 
-spinner="//--\\||"
+spinner="/-\|"
 i=0
 
 count_imgs_file=$(mktemp)
@@ -32,7 +32,7 @@ echo 0 > "$count_imgs_file"
 
 # 压缩图片
 find "$TARGET_DIR" -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" \) | while read img_file; do
-    i=$(( (i + 1) % 8 ))
+    i=$(( (i + 1) % 4 ))
 
     count_imgs=$(<"$count_imgs_file")
     count_imgs=$((count_imgs + 1))
@@ -45,6 +45,6 @@ find "$TARGET_DIR" -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg
 done
 
 rm "$count_imgs_file"
-
+echo ""
 echo "✅ $count Images in $TARGET_DIR have been compressed to WebP format."
 echo "----------------------------------------"
