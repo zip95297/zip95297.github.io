@@ -54,7 +54,7 @@ git checkout -b <new-branch>
 git checkout -b <new-branch>
 ```
 
-把文件切换到 指定的 commit-id 的状态 这个可以用 [diff](#git-diff)
+把文件切换到 指定的 commit-id 的状态 这个可以用 [diff](##git-diff)
 ```shell
 git checkout <commit-hash> -- <file-path>
 ```
@@ -288,4 +288,49 @@ ssh-keygen -t rsa -C "zip95297@gmail.com" # 创建 公私钥 对
 # 然后在 github > settings > ssh and gpg keys 中添加自己的公钥，之后测试链接就通了
 √ -> zip @ ~ % ssh -T git@github.com                                          
 Hi zip95297! You've successfully authenticated, but GitHub does not provide shell access.
+```
+配置之后 `git clone` 等 可以用 git 或者 http 连接。
+
+# 关于从版本库或者工作区中删除
+
+有三个命令主要： clean （清除untracked），restore（删工作区） ，restore --staged （移除暂存区到工作区）
+
+## 删除 !新建!文件 （未跟踪）
+
+clean 是用来删 没被跟踪的 文件和目录 也就是：（ 对 已经跟踪 的文件不会有影响）
+- 没有被add过
+- 在历史提交中没有（untracked）
+下面是具体用法
+```shell
+# 查看哪些文件将被删除(--dry-run|彩排的意思)
+git clean -n
+
+# 强制删除
+git clean -f
+
+# 删除整个目录目录
+git clean -d
+
+# 包括 ignore 的
+git clean -x
+
+# 只删除 ignore 的
+git clean -X
+```
+
+## 恢复到 add 之后的状态 （放弃工作区）
+
+恢复到 add 之后的 也就是：放弃 工作区修改，保留 暂存区修改 （add 过的会保存）
+```shell
+git restore <file>
+```
+
+## 恢复到 上次commit 之后的状态 （放弃工作区和暂存区）
+
+恢复到 上次 commit 之后的状态分为两步：
+1. 放弃暂存区
+2. 放弃工作区
+```shell
+git restore --staged <file> # 放弃暂存区
+git restore <file> # 放弃工作区
 ```
