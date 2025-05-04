@@ -27,10 +27,12 @@ filename="$(basename "$2")"
 # 如果以 .md 结尾，去掉后缀
 if [[ $filename == *.md ]]; then
   filename="${filename%.md}"
+  filename_with_space=$filename
 fi
 
 # 获取blog 中的Note path 和 img path
 NOTE="/Users/zip95297/Repository/BLOG/zjb-blog/source/_posts/$filename.md"
+file_path=$NOTE
 IMG="/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$filename"
 
 # 检查文件是否存在
@@ -65,12 +67,13 @@ fi
 # 文件更新：保留md属性 然后对内容直接更新
 note_new=$(mktemp)
 # 读取原笔记中的属性 两个 --- 之间
-awk '/^---/{if (p) {exit} else {p=1}}; p' "$NOTE" >"$note_new"
+awk '/^---/{if (p) {exit} else {p=1}}; p' "$file_path" >"$note_new"
 echo "---" >>"$note_new"
 # 把obsidian的笔记复制过来并覆盖
 cat "$obsidian_note_path" >>"$note_new"
-cat "$note_new" > "$NOTE"
-/Users/zip95297/Repository/BLOG/zjb-blog/utils/chURL "$filename.md" # 修改url
+echo "" >>"$note_new"
+cat "$note_new" > "$file_path"
+/Users/zip95297/Repository/BLOG/zjb-blog/utils/chURL "$filename_with_space.md" # 修改url
 rm -f "$note_new"
 
 # 处理图片
