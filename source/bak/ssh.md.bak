@@ -65,6 +65,8 @@ ssh REMOTE "shell"
 
 # 认证后 把 ssh 进程 放在后台
 # 这个一般搭配 端口转发 或者 传入让 远程机器执行的 命令
+# 后面要加一个 command 例如 sleep true 之类的
+# 端口转发时候想常驻链接 可以用 死循环 "while true;do sleep 1;done"
 -f 
 
 # 允许 允许非本机 通过局域网 连接本地转发的端口 大概是这样
@@ -132,6 +134,11 @@ ssh -L 9999:<remote addr>:8888 user@remote_host
 	所有发往本地 9999 端口的流量 会通过 ssh 隧道 转发到远程 remote 上的 `remote addr:9999`
 - 打开一个shell（如果不像打开shell 可以用 -f 在后台运行，可以使用 -g 允许局域网内的连接）
 
+举个例子：比如我要用 T4 localhost:7860 的服务 我就可以：
+```shell
+ssh -4(指定ipv4) -f -L 7860:localhost:7860 ICCT-T "while true;do sleep 10;done"
+```
+
 ### 远程转发 - 访问远程的流量 F 本地
 
 `ssh -R` 用于把 远程端口 的流量 转发到 本地的某个端口上。也就是允许 远程机器访问本地的服务。
@@ -165,3 +172,4 @@ Host <别名>
   RemoteForward 9090 localhost:90 
   Compression yes # 压缩流量 用于节省带宽
 ```
+
