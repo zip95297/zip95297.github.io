@@ -1,0 +1,55 @@
+---
+title: "ResShift"
+date: 2025-05-15 20:04:50
+updated: 2025-05-15 20:05:12
+mathjax: true
+tags: 
+    - 深度学习
+    - 超分重建
+    - 论文阅读
+    - Diffusion
+categories: 深度学习
+comments: false
+---
+# ResShift
+
+## Motivation
+
+主要想法：缩短马氏链，加速反向传播过程
+
+传统的方法是：从高斯分布中采样 Pure Noise 然后逐步 reverse 得到 一个图像。
+
+主要问题都是 沿用了 原本 DDPM 中的马氏链 （太长，从 pure noise 开始还原）导致要经过很多次迭代才能 生成出一张图片。而且 reverse 过程过长 还会导致 生成的图像过于平滑。
+（？可能是因为 纹理细节被当做噪声给 过滤掉 ？ 如何 balance 高频 和 噪声？）
+（？多次经过 diffusion 的reverse 相当于 过了很多次低通滤波？ ）
+
+> One common approach involves inserting the LR image into the input of current diffusion model. and retraining the model from scratch on the training data for SR. 一种方法是 把 LR 插入到输入中 （在Google的Image Super-Resolution via Iterative Refinement ）论文中 将 Pure Noise 和 LR concat 然后在 Unet 中 做 reverse
+
+> Another popular way is to use an unconditional pre-trained diffusion model as a prior and modify its reverse path to generate the expected HR image. 通过 LR 引导 反向过程 ，类似于 LDM 中的 Attn 的作用，但是也是从 Pure Noise 开始的
+
+在 超分 任务中 目标是生成 HR ， 有先验数据 LR 。通过利用 LR 来得到 生成的HR图像，来缩短马氏链：类似于 直接截断  Pure Noise -> LR（这个LR 不直接是 LR 而是马氏链中接近的一个 节点） ，从 LR 开始进行 reverse 得到 HR。
+
+## 前向过程
+
+记：
+	HR 为 $x_0$  ， LR 为 $y_0$ ，两者之间距离 Error 为 $e_0$ 
+
+论文 的 核心想法 是：transit from $x_0$ to $y_0$ by gradually shifting their residual $e_0$ through a Markov chain with length T. 
+
+参数序列 $\{\eta_t\}^T_{t-1}$ 随 t 单调增，t=1 时$\eta=0$，t=T 时$\eta=1$
+
+逐步加噪：
+$$
+q(x_t\mid x_{t-1},y_0)=N(x_t;x_{t-1}+\alpha_te_0,k^2\alpha_tI)
+$$
+其中 $\alpha_t=\eta_t-\eta_{t-1}$ , $k$ 用来控制方差。通过
+
+
+
+# 训练过程
+
+用了 VQ-VAE 作为 autoencoder
+
+LPIPS 通常是一个训练好的 感知相似度模型 一个计算相似度的方法
+
+UNetModelSwin 用这个作为 diffusion model 
