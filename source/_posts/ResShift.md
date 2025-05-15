@@ -42,13 +42,69 @@ comments: false
 $$
 q(x_t\mid x_{t-1},y_0)=N(x_t;x_{t-1}+\alpha_te_0,k^2\alpha_tI)
 $$
-其中 $\alpha_t=\eta_t-\eta_{t-1}$ , $k$ 用来控制方差。通过
+其中 $\alpha_t=\eta_t-\eta_{t-1}$ , $k$ 用来控制方差。通过逐步加噪的公式(正态分布可加性)可得到：（论文中证明任意步长t的边际分布解析可积）
 
+一步加噪：
+$$
+q(x_t\mid x_0,y_0) = N(x_t;x_0+\eta_t e_0,k^2\eta_t I)
+$$
+## 反向过程
 
+$$
+p(x_0\left|y_0\right.)=\int p(x_T\left|y_0\right.)\prod_{t=1}^Tp_\theta\left(x_{t-1}\left|x_t\right.,y_0\right.)dx_{1:T}
+$$
+在这个 式子中 $p(x_T\left|y_0\right.)\approx N(x_T\left|y_0\right.,k^2I)$ , $p_\theta\left(x_{t-1}\left|x_t\right.,y_0\right.)$ 是 diffusion模型 其中 $\theta$ 就是可学习参数。
 
-# 训练过程
+反向过程 的目的就是为了 估计 给出 $y_0$ 为条件 的 $x_0$ 的后验分布。
+
+其中的 $x_T$ 在这个里就是 加噪T步 的图像，整个过程就是从 $x_t$ 还原到 $x_0$ 
+
+## 参数的优化
+
+根据 扩散模型文献中 的假设 $p_\theta$ 为：
+$$
+p_{{\theta}}({x}_{t-1}|{x}_t,{y}_0)=\mathcal{N}({x}_{t-1};{\mu}_{{\theta}}({x}_t,{y}_0,t),{\Sigma}_{{\theta}}({x}_t,{y}_0,t))
+$$
+
+优化目标就是，最小化证据下界：
+$$
+\min_{{\theta}}\sum_tD_{\mathrm{KL}}\left[q({x}_{t-1}|{x}_t,{x}_0,{y}_0)\|p_{{\theta}}({x}_{t-1}|{x}_t,{y}_0)\right]
+$$
+
+其实就是让模型 **预测的** 前一时刻 图像 靠近 **真实的**前一时刻图像的 分布。
+
+反向过程和参数的优化和传统的 Diffusion 几乎没什么区别
+
+##  噪声策略 Noise Schedule
+
+根据前项过程的式子可以看出，噪声的方差由 $\kappa\sqrt{\eta_T}$ 控制 。在LDM中提到第一步加噪的方差应该足够小（e.g., 0.04 in LDM），从而确保 $q(x_1|x_0,y_0)\approx q(x_0)$ ， $\eta_T$ 应该尽可能接近1 （前向过程中的均值）。所以文中的 $\eta_T$ Schedule 如下：
+	当T=1 时： $\eta_1=min((\frac{0.04}{k})^2,0.001)$
+	当 $T\in[2,T-1]$ , $\sqrt{\eta_t} = \sqrt{\eta_1} \times b_0^{\beta_t}$ , $\beta_t= (\frac{t-1}{T-1})^p \times (T-1) , b_0=exp[\frac{1}{2(T-1)}log \frac{\eta_T}{\eta_1}]$   ，p 是超参数
+
+ 
+
+# 代码中的细节
+
+[ResShift Repo](https://github.com/zsyOAOA/ResShift) 原文仓库在此处
 
 用了 VQ-VAE 作为 autoencoder
 
 LPIPS 通常是一个训练好的 感知相似度模型 一个计算相似度的方法
 
+UNetModelSwin 用这个作为 diffusion model 
+
+## 数据
+
+### 训练数据
+
+训练时候用的 256x256的 HR 图像 根据 LDM 从 ImageNet 的训练集中随机裁剪出，然后使用 RealESRGAN 的 退化流程 合成的 LR 图像。
+
+![](https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/ResShift/Pasted%20image%2020250515211826.webp?raw=true)
+
+### 测试数据
+
+基于常用退化模型合成了一个测试数据集，用了 ImageNet中取3000张，还有RealSR，和自己收集的
+
+## 模型
+
+使用 Unet 作为 Diffusion 的网络结构，用 Swin Transformer 块儿  替换 UNet中的 自关注层

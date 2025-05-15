@@ -63,12 +63,12 @@ $$
 
 根据 扩散模型文献中 的假设 $p_\theta$ 为：
 $$
-p_{{\theta}}({x}_{t-1}|{x}_t,{y}_0)=\mathcal{N}({x}_{t-1};{\mu}_{{\theta}}({x}_t,{y}_0,t),{\Sigma}_{{\theta}}({x}_t,{y}_0,t))
+p_{\boldsymbol{\theta}}(\boldsymbol{x}_{t-1}|\boldsymbol{x}_t,\boldsymbol{y}_0)=\mathcal{N}(\boldsymbol{x}_{t-1};\boldsymbol{\mu}_{\boldsymbol{\theta}}(\boldsymbol{x}_t,\boldsymbol{y}_0,t),\boldsymbol{\Sigma}_{\boldsymbol{\theta}}(\boldsymbol{x}_t,\boldsymbol{y}_0,t))
 $$
 
 优化目标就是，最小化证据下界：
 $$
-\min_{{\theta}}\sum_tD_{\mathrm{KL}}\left[q({x}_{t-1}|{x}_t,{x}_0,{y}_0)\|p_{{\theta}}({x}_{t-1}|{x}_t,{y}_0)\right]
+\min_{\boldsymbol{\theta}}\sum_tD_{\mathrm{KL}}\left[q(\boldsymbol{x}_{t-1}|\boldsymbol{x}_t,\boldsymbol{x}_0,\boldsymbol{y}_0)\|p_{\boldsymbol{\theta}}(\boldsymbol{x}_{t-1}|\boldsymbol{x}_t,\boldsymbol{y}_0)\right]
 $$
 
 其实就是让模型 **预测的** 前一时刻 图像 靠近 **真实的**前一时刻图像的 分布。
@@ -99,7 +99,7 @@ UNetModelSwin 用这个作为 diffusion model
 
 训练时候用的 256x256的 HR 图像 根据 LDM 从 ImageNet 的训练集中随机裁剪出，然后使用 RealESRGAN 的 退化流程 合成的 LR 图像。
 
-![[Pasted image 20250515211826.png]]
+![](https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/ResShift/Pasted%20image%2020250515211826.webp?raw=true)
 
 ### 测试数据
 
