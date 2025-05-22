@@ -63,12 +63,12 @@ $$
 
 根据 扩散模型文献中 的假设 $p_\theta$ 为：
 $$
-p_{{\theta}}({x}_{t-1}|{x}_t,{y}_0)=\mathcal{N}({x}_{t-1};{\mu}_{{\theta}}({x}_t,{y}_0,t),{\Sigma}_{{\theta}}({x}_t,{y}_0,t))
+p_{{\theta}}({x}_{t-1}|{x}_t,{y}_0)={N}({x}_{t-1};{\mu}_{{\theta}}({x}_t,{y}_0,t),{\Sigma}_{{\theta}}({x}_t,{y}_0,t))
 $$
 
 优化目标就是，最小化证据下界：
 $$
-\min_{{\theta}}\sum_tD_{\mathrm{KL}}\left[q({x}_{t-1}|{x}_t,{x}_0,{y}_0)\|p_{{\theta}}({x}_{t-1}|{x}_t,{y}_0)\right]
+\min_{{\theta}}\sum_tD_{{KL}}\left[q({x}_{t-1}|{x}_t,{x}_0,{y}_0)\|p_{{\theta}}({x}_{t-1}|{x}_t,{y}_0)\right]
 $$
 
 其实就是让模型 **预测的** 前一时刻 图像 靠近 **真实的**前一时刻图像的 分布。
@@ -107,4 +107,4 @@ UNetModelSwin 用这个作为 diffusion model
 
 ## 模型
 
-使用 Unet 作为 Diffusion 的网络结构，用 Swin Transformer 块儿  替换 UNet中的 自关注层
+使用 Unet 作为 Diffusion 的网络结构，用 Swin Transformer 块儿  替换 UNet中的 自关注层 

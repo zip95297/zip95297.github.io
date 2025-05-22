@@ -63,12 +63,12 @@ $$
 
 根据 扩散模型文献中 的假设 $p_\theta$ 为：
 $$
-p_{\boldsymbol{\theta}}(\boldsymbol{x}_{t-1}|\boldsymbol{x}_t,\boldsymbol{y}_0)=\mathcal{N}(\boldsymbol{x}_{t-1};\boldsymbol{\mu}_{\boldsymbol{\theta}}(\boldsymbol{x}_t,\boldsymbol{y}_0,t),\boldsymbol{\Sigma}_{\boldsymbol{\theta}}(\boldsymbol{x}_t,\boldsymbol{y}_0,t))
+p_{{\theta}}({x}_{t-1}|{x}_t,{y}_0)=\mathcal{N}({x}_{t-1};{\mu}_{{\theta}}({x}_t,{y}_0,t),{\Sigma}_{{\theta}}({x}_t,{y}_0,t))
 $$
 
 优化目标就是，最小化证据下界：
 $$
-\min_{\boldsymbol{\theta}}\sum_tD_{\mathrm{KL}}\left[q(\boldsymbol{x}_{t-1}|\boldsymbol{x}_t,\boldsymbol{x}_0,\boldsymbol{y}_0)\|p_{\boldsymbol{\theta}}(\boldsymbol{x}_{t-1}|\boldsymbol{x}_t,\boldsymbol{y}_0)\right]
+\min_{{\theta}}\sum_tD_{\mathrm{KL}}\left[q({x}_{t-1}|{x}_t,{x}_0,{y}_0)\|p_{{\theta}}({x}_{t-1}|{x}_t,{y}_0)\right]
 $$
 
 其实就是让模型 **预测的** 前一时刻 图像 靠近 **真实的**前一时刻图像的 分布。
