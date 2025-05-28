@@ -26,5 +26,5 @@
     - name: 伴奏下载
       link: http://search.5sing.kugou.com/?type=bz
       avatar: 
-      descr: 免费伴奏下载网站
+      descr: 免费伴奏下载网站,如果不可下载可以调试网页->网络监控，找到mp3文件url然后wget
 
