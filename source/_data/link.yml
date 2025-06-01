@@ -28,3 +28,8 @@
       avatar: 
       descr: 免费伴奏下载网站,如果不可下载可以调试网页->网络监控，找到mp3文件url然后wget
 
+    - name: 升降调&变奏
+      link: https://vocalremover.org/zh/pitch
+      avatar: 
+      descr: 歌曲升降调变奏
+
