@@ -12,7 +12,7 @@ comments: true
 # LeetCode Hot 100
 
 
-## 1. 两数之和1-251210
+## 1. [两数之和](https://leetcode.cn/problems/two-sum/)1-251210
 
 #哈希表
 
@@ -30,7 +30,7 @@ class Solution:
 
 对每个数 留下 索引（value） 以及 到 target 的差（index），之后遇到 target差 的数，直接读出索引就行
 
-## 2. 字母异位词分组49-251210
+## 2. [字母异位词分组](https://leetcode.cn/problems/group-anagrams/)49-251210
 
 #哈希表 #排序
 
@@ -98,7 +98,7 @@ class Solution:
 		return list(dic.values())
 ```
 
-## 3. 最长连续序列128-251210
+## 3. [最长连续序列](https://leetcode.cn/problems/longest-consecutive-sequence/)128-251210
 
 #并查集 #set
 
@@ -142,7 +142,7 @@ class Solution:
 这个算法的关键是找到起点 避免对一个数的重复遍历
 list 转 set 还有 判断 in set 的操作 时间复杂度是 O(1), 如果是用 list 的 in 时间复杂度是 O(n)
 
-## 4. 移动零283-251210
+## 4. [移动零](https://leetcode.cn/problems/move-zeroes/)283-251210
 
 #双指针 #快慢指针
 
@@ -202,7 +202,7 @@ class Solution:
 			fast+=1
 ```
 
-## 5. 盛最多水的容器11-251210
+## 5. [盛最多水的容器](https://leetcode.cn/problems/container-with-most-water/)11-251210
 
 #双指针
 
@@ -269,7 +269,7 @@ class Solution:
 		return max_area
 ```
 
-## 6. 三数之和15-251211
+## 6. [三数之和](https://leetcode.cn/problems/3sum/)15-251211
 
 #双指针
 
@@ -312,7 +312,7 @@ class Solution:
 
 这个方法和 第一个复杂度都是$O(n^2)$ 但是双指针要快一些啊，是因为 枚举 + 哈希表法虽是 O (n²)，但哈希表的额外开销、随机内存访问导致常数项远大于双指针；1. 双指针法的「$O(n^2)$」是**真 $O(n^2)$**（外层 n 次，内层 n 次），且常数项极小；
 
-## 7. 接雨水42-251211
+## 7. [接雨水](https://leetcode.cn/problems/trapping-rain-water/)42-251211
 
 #单调栈 #动态规划 #双指针
 
@@ -399,11 +399,11 @@ class Solution:
 		return ans
 ```
 
-## 8.  无重复字符的最长子串3-251212
+## 8.  [无重复字符的最长子串](https://leetcode.cn/problems/longest-substring-without-repeating-characters/)3-251212
 
 #滑动窗口
 
-这个比较简单，可以学习一下别人的代码思路
+这个比较简单，可以学习一下别人的代码思路。下面这个是我的。
 
 ```python
 class Solution:
@@ -421,3 +421,336 @@ class Solution:
 				f = window.popleft()
 				count[f] -= 1
 		return ans
+```
+
+用 set（字典本身就适合处理 是否重复这样的事情）
+```python
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        # 滑动窗口
+        left = 0
+        window = set()
+        max_length = 0
+        for right in range(len(s)):
+            while s[right] in window:
+                window.remove(s[left])
+                left += 1
+            window.add(s[right])
+            if len(window) > max_length:
+                max_length = len(window)
+        return max_length
+```
+
+这个2ms 最快
+```python
+class Solution:
+	def lengthOfLongestSubstring(self, s: str) -> int:
+		n = len(s)
+		if n <= 1:
+			return n
+		_dict = {}
+		start = -1
+		res = 0
+		for i, c in enumerate( s ):
+			if c in _dict and _dict[c] > start:
+				start = _dict[c]
+			res = max(res, i - start)
+			_dict[c] = i
+		return res
+```
+
+## 9. [找到字符串中所有字母异位词](https://leetcode.cn/problems/find-all-anagrams-in-a-string/)438-251212
+
+#滑动窗口 
+
+自己写的解
+```python
+class Solution:
+	def findAnagrams(self, s: str, p: str) -> List[int]:
+		ans = []
+		count = {}
+		window = collections.deque()
+		for c in p :
+			count[c] = 0
+		for c in p :
+			count[c] -= 1
+		count['other'] = 0
+		start = 0
+		for c in s :
+			window.append(c)
+			if c in count.keys() :
+				count[c] += 1
+				while count[c] > 0 :
+					f = window.popleft()
+					start += 1
+					count[f] -= 1
+			else :
+				count['other'] += 1
+			while count['other'] != 0 :
+				f = window.popleft()
+				start += 1
+				if f in count.keys() :
+					count[f] -= 1
+				else :
+					count['other'] -= 1
+			if len(window) == len(p) :
+				ans.append(start)
+		return ans
+```
+
+## 10. [和为 K 的子数组](https://leetcode.cn/problems/subarray-sum-equals-k/)560-251212
+
+#前缀和
+
+维护一个前n项和 sumn 然后 如果遇到 现在的 sumn - k 存在（x个） 那么就 有x个子数组符合
+```python 
+class Solution:
+	def subarraySum(self, nums: List[int], k: int) -> int:
+		ans,sumn = 0, 0
+		cnt = collections.defaultdict(int)
+		for n in nums:
+			cnt[sumn] += 1
+			sumn += n
+			ans += cnt[sumn - k ]
+		return ans
+```
+
+直到思路之后写了一次也没写对，当成两数之和了，存了index 应该是维护一个sumn为一个数的序列个数，之后再做一次
+
+## 11. [滑动窗口最大值](https://leetcode.cn/problems/sliding-window-maximum/)239-251215
+
+#大根堆 / #单调队列 #优先队列
+
+### 思路一：大根堆
+
+对于最大值这种问题，可以 维护一个 优先队列（大根堆）来做，也就是放入新元素是按照 我们想要的顺序存好。这个思路很容易想到，要善用这个数据结构。暴力的方法是，每次加入新元素就用$O(k)$ 来找一下窗口中的最大值，但是每个元素在整个流程中几乎被遍历k次，可以节省时间的方法就是记录在窗口中的元素的大小信息。也就是排序，但是如果每次来新的都排序，时间反而大于$O(k)$，因此需要我们维护一个 大根堆来做。在python中 最小堆是 ：heapq.heapify(list) 可以将一个list转换成最**小**堆 这个只保证**堆顶是 最小的** 而不是有序的
+
+```python
+class Solution:
+	def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+		maxheap = [(-nums[i],i) for i in range(0,k) ]
+		# 这个python 标准库的最小堆
+		heapq.heapify(maxheap)
+		ans = [ -maxheap[0][0] ]
+		for i in range(k,len(nums)) :
+			heapq.heappush(maxheap,(-nums[i],i))
+			while maxheap[0][1] < i-k+1 :
+				heapq.heappop(maxheap)
+			ans.append(-maxheap[0][0])
+		return ans
+```
+
+### 思路二：单调队列（优先队列）\*
+
+对于下标  $i<j<i+k$  且 $nums[i]<nums[j]$ 如果 nums\[i] 在窗口中，那么 nums\[j] 一定也在. 所以如果出现这样的递增子序列，就可以将 i 给删除掉。
+因此我们可以维护一个没有被移除的队列，这个队列是单调递减的。有因为窗口滑动，左侧还需要弹出，所以用双端队列。
+
+```python
+class Solution:
+	def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+		q = collections.deque()
+		ans = []
+		for i in range(0,len(nums)) :
+			while q and nums[i] >= nums[q[-1]] :
+				q.pop()
+			q.append(i)
+			while q[0] <= i-k :
+				q.popleft()
+			if i >= k-1 :
+				ans.append(nums[q[0]])
+		return ans
+```
+
+维护了这样的单调递减序列，保证 开头是最大的，而且开头还得在窗口中。
+
+## 12. [最小覆盖子串](https://leetcode.cn/problems/minimum-window-substring/)76-251215
+
+#滑动窗口 
+
+```python
+class Solution:
+	def minWindow(self, s:str, t: str) -> str:
+		# 维护一个缺少多少的表
+		w = collections.deque()
+		rq = {}
+		ansl ,l = 9999999,0
+		ans = ''
+		for c in t :
+			if c in rq.keys() :
+				rq[c] += 1
+			else :
+				rq[c] = 1
+		# 处理队列，保证 rq 都得是 0
+		for c in s :
+			w.append(c)
+			l += 1
+			if c in rq.keys() :
+				rq[c] -= 1
+			while w :
+				if w[0] in rq.keys() :
+					print(rq[w[0]])
+				if w[0] in rq.keys() :
+					if rq[w[0]] >= 0 :
+						break
+					else :
+						rq[w[0]] += 1
+				w.popleft()
+				l -= 1
+			jump = False
+			for i in rq.values() :
+				if i > 0 :
+					jump = True
+			if ansl > l and jump == False :
+				ansl = l
+				ans = ''.join(w)
+		return ans
+```
+
+## 13. [最大子数组和](https://leetcode.cn/problems/maximum-subarray/)53-251215
+
+#动态规划 #分治法 #前缀和 做题目的时候不要被刷过的题目的思路限制住方向 也要做新的想法尝试
+
+### 思路一：DP
+
+以 index 为 **结尾** 的最大子序列和
+```python
+class Solution :
+	def maxSubArray(self, nums: List[int]) -> int :
+		# 以index 为结尾的最大值
+		dp = [0] * len(nums)
+		for i,n in enumerate(nums) :
+			dp[i] = max(dp[i-1]+nums[i],nums[i])
+		return max(dp)
+```
+
+### 思路二：分治法（还没学1216）
+
+官方题解说这个类似于 「线段树求解最长公共上升子序列问题」的pushup操作
+
+
+
+### 思路三： 前缀和
+
+参考 5盛水最多的容器中的动态规划方法，记录一个index左边最大和右边最小
+```python
+# class Solution:
+# def maxSubArray(self, nums: List[int]) -> int:
+# # 一个index左边的最小值，一个index右边的最大值
+# leftMin,rightMax = [10001]*(len(nums)+1),[-10001]*(len(nums)+1)
+# sn = [0] * (len(nums)+1)
+# for i in range(len(nums)) :
+# sn[i+1] = nums[i]
+# for i in range(1,len(sn)) :
+# sn[i] += sn[i-1]
+# leftMin[0] = sn[0]
+# rightMax[-1] = sn[-1]
+# for i in range(1,len(sn)) :
+# leftMin[i] = min(leftMin[i-1],sn[i])
+# rightMax[len(sn)-1-i] = max(rightMax[len(sn)-i],sn[len(sn)-1-i])
+# ans = -99999999
+# for i in range(len(sn)-1) :
+# if ans < rightMax[i+1] - leftMin[i] :
+# ans = rightMax[i+1] - leftMin[i]
+# return ans
+```
+
+维护两个太慢了，因为这个主要的约束 是 最小值在最大值的右边，通过记录最小值，然后计算 s\[n] 和 min 的差 来更新 结果：
+
+```python
+class Solution :
+	def maxSubArray(self, nums: List[int]) -> int :
+		tsum, tmin, ans = 0, 0, -99999
+		for n in nums :
+			tsum += n
+			ans = max(ans,tsum-tmin)
+			tmin = min(tmin,tsum)
+		return ans
+```
+
+## 14. [合并区间](https://leetcode.cn/problems/merge-intervals/)56-251215
+
+#排序 #数组 #单调栈
+
+这个重点在于 排序的时候使用 lambda 表达式 lambda是个函数，lambda x: y 意思是输入 x 输出 y ，排序时候用sort(key =)
+
+```python
+# 20ms
+class Solution:
+	def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+		intervals.sort(key=lambda x: x[0])
+		i = 0
+		while True :
+			if i+1 >= len(intervals) :
+				break
+			if intervals[i][1] >= intervals[i+1][0] :
+				new_iv = [intervals[i][0],max(intervals[i][1],intervals[i+1][1])]
+				intervals.remove(intervals[i+1])
+				intervals[i] = new_iv
+			else : i += 1
+		return intervals
+```
+
+现在这种 每次的 remove 很慢 总体 20ms左右，还有一种方法是 维护一个 单调的栈，可以合并就合并后压栈否则就直接压. 这样结果就会快一点
+
+```python
+# 5ms
+class Solution:
+	def push(self,res_inv,item) :
+		if len(res_inv) == 0 :
+			res_inv.append(item)
+		top = res_inv[-1]
+		if top[1] >= item[0] :
+			res_inv.pop()
+			item = [top[0],max(top[1],item[1])]
+		res_inv.append(item)
+		return res_inv
+		  
+	def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+		ans = []
+		intervals.sort(key=lambda x:x[0])
+		for iv in intervals :
+			self.push(ans,iv)
+		return ans
+```
+
+## 15. [轮转数组](https://leetcode.cn/problems/rotate-array/)189-251215
+
+```python
+class Solution:
+	def rotate(self, nums: List[int], k: int) -> None:
+		"""
+		Do not return anything, modify nums in-place instead.
+		"""
+		k = k%len(nums)
+		nums[:] = nums[len(nums)-k:] + nums[:len(nums)-k]
+```
+需要注意的两个是 k 可能超过 nums 的长度，需要通过%来计算 时间移动了多少步
+然后 下一行中 如果 nums\[:] 写成 nums ，那么nums就不会被修改 这个是python的一个特性 写成nums就是修改的这个局部变量 而不是修改了这个引用。
+
+这个时间复杂度是 $O(n)$
+
+\*最快的办法是反转数组：
+
+```python
+class Solution:
+    def rotate(self, nums: List[int], k: int) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+
+        # [1,2,3,4,5,6,7]
+        # 1. 反转数组 [7,6,5,4,3,2,1]
+        # 2. 反转前k=3个元素 [5,6,7, 4,3,2,1]
+        # 3. 反转剩余元素 [5,6,7, 1,2,3,4]
+        n = len(nums)
+        k = k % n
+        nums.reverse()
+        nums[:k] = nums[:k][::-1]
+        nums[k:] = nums[k:][::-1]
+```
+
+## 16. [除自身以外数组的乘积](https://leetcode.cn/problems/product-of-array-except-self/)238-251215
+
+
+
+

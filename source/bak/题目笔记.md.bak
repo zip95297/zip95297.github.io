@@ -667,7 +667,7 @@ class Solution :
 		return ans
 ```
 
-## 14. [合并区间](https://leetcode.cn/problems/merge-intervals/)56-251215
+## 14. [合并区间](https://leetcode.cn/problems/merge-intervals/)56-251216
 
 #排序 #数组 #单调栈
 
@@ -713,7 +713,7 @@ class Solution:
 		return ans
 ```
 
-## 15. [轮转数组](https://leetcode.cn/problems/rotate-array/)189-251215
+## 15. [轮转数组](https://leetcode.cn/problems/rotate-array/)189-251216
 
 ```python
 class Solution:
@@ -749,8 +749,309 @@ class Solution:
         nums[k:] = nums[k:][::-1]
 ```
 
-## 16. [除自身以外数组的乘积](https://leetcode.cn/problems/product-of-array-except-self/)238-251215
+## 16. [除自身以外数组的乘积](https://leetcode.cn/problems/product-of-array-except-self/)238-251216
+
+#前后缀 
+
+### 思路一：前后缀积
+
+这个 也是用 前缀后缀积 但是不需要 维护两个list 因为我们知道最后的目的是 在 index位置 ans\[i] = $\prod_{j\ne i}nums_j$  所以不妨 先正向遍历拿到前面的积 再反向遍历，拿到后面的积。
+
+```python
+class Solution:
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        length = len(nums)
+        answer = [0] * length
+        answer[0] = 1
+        for i in range(1, length):
+            answer[i] = nums[i - 1] * answer[i - 1]
+        R = 1
+        for i in reversed(range(length)):
+            answer[i] = answer[i] * R 
+            R *= nums[i]
+        return answer
+```
+
+### UES
+
+这个解法考虑了0 同时用了reduce函数可以看一下
+
+```python
+class Solution:
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        if 0 in nums:
+            ret= [0]*len(nums)
+            if nums.count(0)>=2:
+                return ret
+            ret[nums.index(0)]=reduce(mul,(i for i in nums if i!=0),)
+            return ret
+        p=reduce(mul,nums,)
+        if p!=0:
+            return [p//i for i in nums]
+```
+### Trash
+
+用 前缀积 后缀积 来在 $O(n)$ 时间复杂度解决这个问题 但是 空间复杂度是 $O(n)$
+
+```python
+class Solution:
+	def productExceptSelf(self, nums: List[int]) -> List[int]:
+		fD, bD = nums[:], nums[:] # 定义前缀后缀积
+		for i in range(1,len(nums)) :
+			fD[i] *= fD[i-1]
+			bD[len(nums)-i-1] *= bD[len(nums)-i]
+		ans = [ bD[1] ]
+		for i in range(1,len(nums)-1) :
+			ans.append( fD[i-1] * bD[i+1] )
+		ans.append(fD[-2])
+		return ans
+```
+
+## 17. [缺失的第一个正数](https://leetcode.cn/problems/first-missing-positive/)41-251216
 
 
+### 思路一：原地哈希(节省内存)
+
+参考这个：[寻找文件副本](https://leetcode.cn/problems/shu-zu-zhong-zhong-fu-de-shu-zi-lcof/)
+
+ans 最大的情况 就是 1,len(nums)都在 ，那么如果把 nums 中的 值 作为 index 那么肯定有 index 用不完的情况，第一个没用的就是 答案。
+v\[index] 是负数，那么这个index 可以直接拿来用，如果 v\[i]>0 那么我们就需要把 这个 v\[i] 也给记录下来。向链表一样顺着找
+
+```python
+class Solution:
+	def firstMissingPositive(self, nums: List[int]) -> int:
+		l = len(nums)
+		for i in range(len(nums)) :
+			target = nums[i]-1
+			if target < 0 or target >= l :
+				continue
+			while nums[target] <= l and nums[target] > 0 :
+				if nums[target] == target + 1 :
+					break
+				next_target = nums[target] - 1
+				nums[target] = target + 1
+				target = next_target
+			nums[target] = target + 1
+		for i in range(len(nums)) :
+			if i+1 != nums[i] :
+				return i+1
+		else :
+			return l+1
+```
+
+
+题解中的原地哈希，这个比上面的方法更好 
+```python
+class Solution:
+	def firstMissingPositive(self, nums: List[int]) -> int:
+		n = len(nums)
+		for i in range(n):
+			if nums[i] <= 0:
+			nums[i] = n + 1
+		for i in range(n):
+			num = abs(nums[i])
+			if num <= n:
+				nums[num - 1] = -abs(nums[num - 1])
+		for i in range(n):
+			if nums[i] > 0:
+				return i + 1
+		return n + 1
+```
+### Trash
+题目中限制了空间复杂度是常数，如果不考虑空间，这个方法很快
+```python
+class Solution:
+	def firstMissingPositive(self, nums: List[int]) -> int:
+		ans = len(nums)+1
+		s = set(nums)
+		for i in range(len(nums),0,-1) :
+			if i in s :
+				continue
+			else : ans = min(ans,i)
+		return ans
+```
+
+## 18. [矩阵置零](https://leetcode.cn/problems/set-matrix-zeroes/)73-251216
+
+先处理行再处理列 这个是 $O(mn)$ 时间复杂度。空间复杂度是 $O(n)$  
+
+```python
+class Solution:
+	def setZeroes(self, matrix: List[List[int]]) -> None:
+		"""
+		Do not return anything, modify matrix in-place instead.
+		"""
+		c_index = set()
+		for i,n in enumerate(matrix) :
+			if 0 in n :
+				index = [ -1 if n[index]!=0 else index for index in range(len(n)) ]
+				[c_index.add(x) for x in index]
+				matrix[i] = [0] * len(n)
+		for i,n in enumerate(matrix) :
+			for j in range(len(n)) :
+				if j in c_index:
+					matrix[i][j] = 0
+```
+
+## 19. [螺旋矩阵](https://leetcode.cn/problems/spiral-matrix/)54-251216
+
+遇到墙换方向
+
+```python
+class Solution:
+	def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+		ans = []
+		i,j = 0,0
+		down = len(matrix)
+		right = len(matrix[0])
+		total = down * right
+		left = 1
+		up = 1
+		  
+		di,dj = 0,1
+		cnt = 0
+		if right == 1 :
+			ans = [ i[0] for i in matrix ]
+			return ans
+		  
+		while True :
+			print(i,j)
+			ans.append(matrix[i][j])
+			cnt += 1
+			if cnt == total :
+				break
+				i,j = i+di,j+dj
+			if j == right-1 and di == 0 and dj == 1 :
+				di,dj = 1,0
+				up = up + 1
+			if i == down-1 and di == 1 and dj == 0 :
+				di,dj = 0,-1
+				right = right - 1
+			if j == left - 1 and di == 0 and dj == -1 :
+				di,dj = -1,0
+				down = down - 1
+			if i == up - 1 and di == -1 and dj == 0 :
+				di,dj = 0,1
+				left = left + 1
+		return ans
+```
+
+
+## 20. [旋转图像](https://leetcode.cn/problems/rotate-image/)48-251216
+
+主要是下标处理 这几个矩阵相关的题目
+
+```python
+class Solution:
+	def p_single_pos(self,nums,i,j):
+		self.swap(nums,i,j,j,self.col-i-1)
+		self.swap(nums,i,j,self.row-i-1,self.col-j-1)
+		self.swap(nums,i,j,self.row-j-1,i)
+		  
+	def swap(self,nums,i,j,k,l):
+		temp = nums[i][j]
+		nums[i][j] = nums[k][l]
+		nums[k][l] = temp
+		  
+	def rotate(self, matrix: List[List[int]]) -> None:
+		"""
+		Do not return anything, modify matrix in-place instead.
+		"""
+		self.row = len(matrix)
+		self.col = len(matrix[0])
+		for i in range(self.col//2 + 1) :
+			pos_list = [ [i,x] for x in range(i,self.col-i-1) ]
+			for t in pos_list :
+				self.p_single_pos(matrix,t[0],t[1])
+```
+
+## 21. [搜索二维矩阵 II](https://leetcode.cn/problems/search-a-2d-matrix-ii/)240-251216
+
+#二分查找 #分治法 
+
+### 思路一：Z字形查找
+
+最简单的想法，时间复杂度是 $O(n+m)$ 
+
+```python
+class Solution:
+	def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+		maxColIndex = len(matrix[0])-1
+		for i,n in enumerate(matrix[0]) :
+			if n >= target :
+				maxColIndex = i-1
+			if n == target :
+				return True
+		print(maxColIndex)
+		for i in range(0,maxColIndex+1):
+			for j in range(len(matrix)) :
+				if matrix[j][i] == target :
+					return True
+				if matrix[j][i] > target :
+					break
+		return False
+```
+
+### 思路二：二分查找
+
+```python
+class Solution:
+	def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+		for row in matrix:
+			if row[0] > target :
+				break
+			idx = bisect.bisect_left(row, target)
+			if idx < len(row) and row[idx] == target:
+				return True
+		return False
+```
+
+防止不会 自己写一下 binary search
+```python
+class Solution:
+	def bs(self,nums,target):
+		mid = (len(nums))//2
+		print(mid,nums)
+		if nums[0] > target :
+			return None
+		if nums[-1] < target :
+			return None
+		if nums[mid] > target :
+			return self.bs(nums[0:mid],target)
+		elif nums[mid] < target :
+			return self.bs(nums[mid+1:],target)
+		else : return mid
+	
+	def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+		for row in matrix:
+			if row[0] > target :
+				break
+			idx = self.bs(row, target)
+			if idx!=None :
+				return True
+		return False
+```
+
+### 思路三：贪心Z*  从左下角开始搜索！
+
+操了 这个和前面的 Z搜索区别在于 从左下角开始搜索，这样的话就可以沿着 减增减 的序列搜索了 可以排除更多不可能区域. 我觉得这个想法**非常好**。
+[参考题解](https://leetcode.cn/problems/search-a-2d-matrix-ii/solutions/2361487/240-sou-suo-er-wei-ju-zhen-iitan-xin-qin-7mtf)
+
+```python
+class Solution:
+	def searchMatrix(self, matrix, target) -> bool :
+		i, j = len(matrix)-1,0
+		while i>=0 and j<=len(matrix[0])-1 :
+			if matrix[i][j] == target :
+				return True
+			i,j = (i-1,j) if matrix[i][j] > target else (i,j+1)
+			# if matrix[i][j] > target :
+			# 	i -= 1
+			# else :
+			#  	j += 1
+		return False
+```
+
+## 22. [相交链表](https://leetcode.cn/problems/intersection-of-two-linked-lists/)160-251217
 
 
