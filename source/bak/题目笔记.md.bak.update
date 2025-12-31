@@ -11,9 +11,9 @@ comments: true
 ---
 # LeetCode Hot 100
 
-## 1. [两数之和](https://leetcode.cn/problems/two-sum/)1-251210
+# 1. [两数之和](https://leetcode.cn/problems/two-sum/)1-251210
 
-#哈希表
+tag: 哈希表
 
 ```python
 class Solution:
@@ -29,11 +29,11 @@ class Solution:
 
 对每个数 留下 索引（value） 以及 到 target 的差（index），之后遇到 target差 的数，直接读出索引就行
 
-## 2. [字母异位词分组](https://leetcode.cn/problems/group-anagrams/)49-251210
+# 2. [字母异位词分组](https://leetcode.cn/problems/group-anagrams/)49-251210
 
-#哈希表 #排序
+tag: 哈希表 排序
 
-### 思路一：哈希
+## 思路一：哈希
 
 ```python
 class Solution:
@@ -58,7 +58,7 @@ class Solution:
 
 第一次的思路就是 把一个 str 得到一个顺序无关的哈希值。但是复杂度好像有点高。
 
-更好的实现方式：使用了 `from collections import defaultdict` #内置函数
+更好的实现方式：使用了 `from collections import defaultdict` 内置函数
 
 使用  defaultdict 是内置 dict 的子类，核心特性是，当访问不存在的键时，会自动创建这个键并赋值为 **指定默认值** 而不是抛出 KeyError。例如：初始化 `mp=collections.defaultdict(list)` 如果访问了不存在的键就会默认为空list （传入int就是默认0）
 
@@ -79,12 +79,11 @@ class Solution:
 
 这个方法时间复杂度是 O(n(k+s)) s是字符集的大小 26，每个 str 要 k 来遍历字符， s来生成 hash表的键。
 
-### 思路二-排序\* 最优
+## 思路二-排序\* 最优
 
 对每个str排序，然后将排序的这个 字符串 当做字典的索引（哈希值）时间复杂度是 O(nklogk)
 
-#内置函数
-sorted 函数 输入字符串 返回一个按照 unicode 编码的 char list
+内置函数 `sorted` 函数 输入字符串 返回一个按照 unicode 编码的 char list
 ''.join(list(char)) 把charlist 拼成一个串 注意这个join是 字符串的子函数
 
 ```python
@@ -97,9 +96,9 @@ class Solution:
 		return list(dic.values())
 ```
 
-## 3. [最长连续序列](https://leetcode.cn/problems/longest-consecutive-sequence/)128-251210
+# 3. [最长连续序列](https://leetcode.cn/problems/longest-consecutive-sequence/)128-251210
 
-#并查集 #set
+tag: 并查集 set
 
 这个题要求了时间复杂度为O(n) 所以不考虑排序的方法，首先用 set 对 nums 去重，然后找到 所有序列开头的数字 并计算 这个序列的长度，**由于每个数仅进入一次内层循环**，所以时间复杂度符合要求。
 
@@ -141,11 +140,11 @@ class Solution:
 这个算法的关键是找到起点 避免对一个数的重复遍历
 list 转 set 还有 判断 in set 的操作 时间复杂度是 O(1), 如果是用 list 的 in 时间复杂度是 O(n)
 
-## 4. [移动零](https://leetcode.cn/problems/move-zeroes/)283-251210
+# 4. [移动零](https://leetcode.cn/problems/move-zeroes/)283-251210
 
-#双指针 #快慢指针
+tag: 双指针 快慢指针
 
-### 思路一 遇到零放后面
+## 思路一 遇到零放后面
 
 list ： remove是移除 第一个 value，pop是删掉指定index的item
 顺序遍历，把0移到最后
@@ -167,7 +166,7 @@ class Solution:
 			i+=1
 ```
 
-### 思路二 栈 遇到非零压入栈
+## 思路二 栈 遇到非零压入栈
 
 ```python
 class Solution:
@@ -182,7 +181,7 @@ class Solution:
 
 这个方法在最坏的情况下（全是0） 要遍历两次数组
 
-### 思路三 双指针\* 最优
+## 思路三 双指针\* 最优
 
 依次把非零元素移动到 数组靠左边的空位置上。参考快速排序的想法，快拍要确定一个待分割的元素x作为中间点，然后小于等于x放到左边，大于x放到右边。
 
@@ -201,9 +200,9 @@ class Solution:
 			fast+=1
 ```
 
-## 5. [盛最多水的容器](https://leetcode.cn/problems/container-with-most-water/)11-251210
+# 5. [盛最多水的容器](https://leetcode.cn/problems/container-with-most-water/)11-251210
 
-#双指针
+tag: 双指针
 
 首先对于壁 i<j 有:  $S=min(height[i],height[j])*(j-i)$  .
 每次移动 width 一定会减少1，那么只有 min h 变大才会得到更多的水，所以每次需要让短的板子移动。
@@ -268,9 +267,9 @@ class Solution:
 		return max_area
 ```
 
-## 6. [三数之和](https://leetcode.cn/problems/3sum/)15-251211
+# 6. [三数之和](https://leetcode.cn/problems/3sum/)15-251211
 
-#双指针
+tag: 双指针
 
 最简单的想法 对于每个数 当做一个两数之和来做，但是由于两数之和的解法复杂度是 $O(n)$，这种做法的复杂度是 $O(n^2)$.
 
@@ -311,11 +310,11 @@ class Solution:
 
 这个方法和 第一个复杂度都是$O(n^2)$ 但是双指针要快一些啊，是因为 枚举 + 哈希表法虽是 O (n²)，但哈希表的额外开销、随机内存访问导致常数项远大于双指针；1. 双指针法的「$O(n^2)$」是**真 $O(n^2)$**（外层 n 次，内层 n 次），且常数项极小；
 
-## 7. [接雨水](https://leetcode.cn/problems/trapping-rain-water/)42-251211
+# 7. [接雨水](https://leetcode.cn/problems/trapping-rain-water/)42-251211
 
-#单调栈 #动态规划 #双指针
+tag: 单调栈 动态规划 双指针
 
-### 思路一：单调栈\*
+## 思路一：单调栈\*
 
 最开始的思路是 遍历所有h 而不是index 有一个问题就是，如果相等的话之后来了更高的没办法记录宽度，所以尝试用index做一下
 
@@ -336,7 +335,7 @@ class Solution:
 ```
 这个部分我觉得最难的是 每次加多少面积，由于单调栈有单调递减的特征，所以栈顶元素一定是最小的，计算的思路就是 记录 每次pop 添加的水 是一排 就是接雨水 水平线往上的？
 
-### 思路二：动态规划
+## 思路二：动态规划
 
 每个位置 i 能接的水的数量 = min( i 左边的最大高度, i 右边的最大高度) - h\[i\] ,所以暴力搜索就是：
 ```python
@@ -376,7 +375,7 @@ class Solution:
 		return sum(ans)
 ```
 
-### 思路三：双指针
+## 思路三：双指针
 
 本质上和动态规划类似，只是用双指针的方法可以把空间复杂度减到O1，时间复杂度还是 $O(n)$
 
@@ -398,9 +397,9 @@ class Solution:
 		return ans
 ```
 
-## 8.  [无重复字符的最长子串](https://leetcode.cn/problems/longest-substring-without-repeating-characters/)3-251212
+# 8.  [无重复字符的最长子串](https://leetcode.cn/problems/longest-substring-without-repeating-characters/)3-251212
 
-#滑动窗口
+tag: 滑动窗口
 
 这个比较简单，可以学习一下别人的代码思路。下面这个是我的。
 
@@ -458,9 +457,9 @@ class Solution:
 		return res
 ```
 
-## 9. [找到字符串中所有字母异位词](https://leetcode.cn/problems/find-all-anagrams-in-a-string/)438-251212
+# 9. [找到字符串中所有字母异位词](https://leetcode.cn/problems/find-all-anagrams-in-a-string/)438-251212
 
-#滑动窗口 
+tag: 滑动窗口 
 
 自己写的解
 ```python
@@ -497,9 +496,9 @@ class Solution:
 		return ans
 ```
 
-## 10. [和为 K 的子数组](https://leetcode.cn/problems/subarray-sum-equals-k/)560-251212
+# 10. [和为 K 的子数组](https://leetcode.cn/problems/subarray-sum-equals-k/)560-251212
 
-#前缀和
+tag: 前缀和
 
 维护一个前n项和 sumn 然后 如果遇到 现在的 sumn - k 存在（x个） 那么就 有x个子数组符合
 ```python 
@@ -516,11 +515,11 @@ class Solution:
 
 直到思路之后写了一次也没写对，当成两数之和了，存了index 应该是维护一个sumn为一个数的序列个数，之后再做一次
 
-## 11. [滑动窗口最大值](https://leetcode.cn/problems/sliding-window-maximum/)239-251215
+# 11. [滑动窗口最大值](https://leetcode.cn/problems/sliding-window-maximum/)239-251215
 
-#大根堆 / #单调队列 #优先队列
+tag: 大根堆 / 单调队列 优先队列
 
-### 思路一：大根堆
+## 思路一：大根堆
 
 对于最大值这种问题，可以 维护一个 优先队列（大根堆）来做，也就是放入新元素是按照 我们想要的顺序存好。这个思路很容易想到，要善用这个数据结构。暴力的方法是，每次加入新元素就用$O(k)$ 来找一下窗口中的最大值，但是每个元素在整个流程中几乎被遍历k次，可以节省时间的方法就是记录在窗口中的元素的大小信息。也就是排序，但是如果每次来新的都排序，时间反而大于$O(k)$，因此需要我们维护一个 大根堆来做。在python中 最小堆是 ：heapq.heapify(list) 可以将一个list转换成最**小**堆 这个只保证**堆顶是 最小的** 而不是有序的
 
@@ -539,7 +538,7 @@ class Solution:
 		return ans
 ```
 
-### 思路二：单调队列（优先队列）\*
+## 思路二：单调队列（优先队列）\*
 
 对于下标  $i<j<i+k$  且 $nums[i]<nums[j]$ 如果 nums\[i] 在窗口中，那么 nums\[j] 一定也在. 所以如果出现这样的递增子序列，就可以将 i 给删除掉。
 因此我们可以维护一个没有被移除的队列，这个队列是单调递减的。有因为窗口滑动，左侧还需要弹出，所以用双端队列。
@@ -562,9 +561,9 @@ class Solution:
 
 维护了这样的单调递减序列，保证 开头是最大的，而且开头还得在窗口中。
 
-## 12. [最小覆盖子串](https://leetcode.cn/problems/minimum-window-substring/)76-251215
+# 12. [最小覆盖子串](https://leetcode.cn/problems/minimum-window-substring/)76-251215
 
-#滑动窗口 
+tag: 滑动窗口 
 
 ```python
 class Solution:
@@ -605,11 +604,11 @@ class Solution:
 		return ans
 ```
 
-## 13. [最大子数组和](https://leetcode.cn/problems/maximum-subarray/)53-251215
+# 13. [最大子数组和](https://leetcode.cn/problems/maximum-subarray/)53-251215
 
-#动态规划 #分治法 #前缀和 做题目的时候不要被刷过的题目的思路限制住方向 也要做新的想法尝试
+tag: 动态规划 分治法 前缀和 做题目的时候不要被刷过的题目的思路限制住方向 也要做新的想法尝试
 
-### 思路一：DP
+## 思路一：DP
 
 以 index 为 **结尾** 的最大子序列和
 ```python
@@ -622,13 +621,13 @@ class Solution :
 		return max(dp)
 ```
 
-### 思路二：分治法（还没学1216）
+## 思路二：分治法（还没学1216）
 
 官方题解说这个类似于 「线段树求解最长公共上升子序列问题」的pushup操作
 
 
 
-### 思路三： 前缀和
+## 思路三： 前缀和
 
 参考 5盛水最多的容器中的动态规划方法，记录一个index左边最大和右边最小
 ```python
@@ -666,9 +665,9 @@ class Solution :
 		return ans
 ```
 
-## 14. [合并区间](https://leetcode.cn/problems/merge-intervals/)56-251216
+# 14. [合并区间](https://leetcode.cn/problems/merge-intervals/)56-251216
 
-#排序 #数组 #单调栈
+tag: 排序 数组 单调栈
 
 这个重点在于 排序的时候使用 lambda 表达式 lambda是个函数，lambda x: y 意思是输入 x 输出 y ，排序时候用sort(key =)
 
@@ -712,7 +711,7 @@ class Solution:
 		return ans
 ```
 
-## 15. [轮转数组](https://leetcode.cn/problems/rotate-array/)189-251216
+# 15. [轮转数组](https://leetcode.cn/problems/rotate-array/)189-251216
 
 ```python
 class Solution:
@@ -748,11 +747,11 @@ class Solution:
         nums[k:] = nums[k:][::-1]
 ```
 
-## 16. [除自身以外数组的乘积](https://leetcode.cn/problems/product-of-array-except-self/)238-251216
+# 16. [除自身以外数组的乘积](https://leetcode.cn/problems/product-of-array-except-self/)238-251216
 
 #前后缀 
 
-### 思路一：前后缀积
+## 思路一：前后缀积
 
 这个 也是用 前缀后缀积 但是不需要 维护两个list 因为我们知道最后的目的是 在 index位置 ans\[i] = $\prod_{j\ne i}nums_j$  所以不妨 先正向遍历拿到前面的积 再反向遍历，拿到后面的积。
 
@@ -771,7 +770,7 @@ class Solution:
         return answer
 ```
 
-### UES
+## UES
 
 这个解法考虑了0 同时用了reduce函数可以看一下
 
@@ -788,7 +787,7 @@ class Solution:
         if p!=0:
             return [p//i for i in nums]
 ```
-### Trash
+## Trash
 
 用 前缀积 后缀积 来在 $O(n)$ 时间复杂度解决这个问题 但是 空间复杂度是 $O(n)$
 
@@ -806,10 +805,10 @@ class Solution:
 		return ans
 ```
 
-## 17. [缺失的第一个正数](https://leetcode.cn/problems/first-missing-positive/)41-251216
+# 17. [缺失的第一个正数](https://leetcode.cn/problems/first-missing-positive/)41-251216
 
 
-### 思路一：原地哈希(节省内存)
+## 思路一：原地哈希(节省内存)
 
 参考这个：[寻找文件副本](https://leetcode.cn/problems/shu-zu-zhong-zhong-fu-de-shu-zi-lcof/)
 
@@ -856,7 +855,7 @@ class Solution:
 				return i + 1
 		return n + 1
 ```
-### Trash
+## Trash
 题目中限制了空间复杂度是常数，如果不考虑空间，这个方法很快
 ```python
 class Solution:
@@ -870,7 +869,7 @@ class Solution:
 		return ans
 ```
 
-## 18. [矩阵置零](https://leetcode.cn/problems/set-matrix-zeroes/)73-251216
+# 18. [矩阵置零](https://leetcode.cn/problems/set-matrix-zeroes/)73-251216
 
 先处理行再处理列 这个是 $O(mn)$ 时间复杂度。空间复杂度是 $O(n)$  
 
@@ -892,7 +891,7 @@ class Solution:
 					matrix[i][j] = 0
 ```
 
-## 19. [螺旋矩阵](https://leetcode.cn/problems/spiral-matrix/)54-251216
+# 19. [螺旋矩阵](https://leetcode.cn/problems/spiral-matrix/)54-251216
 
 遇到墙换方向
 
@@ -936,7 +935,7 @@ class Solution:
 ```
 
 
-## 20. [旋转图像](https://leetcode.cn/problems/rotate-image/)48-251216
+# 20. [旋转图像](https://leetcode.cn/problems/rotate-image/)48-251216
 
 主要是下标处理 这几个矩阵相关的题目
 
@@ -964,11 +963,11 @@ class Solution:
 				self.p_single_pos(matrix,t[0],t[1])
 ```
 
-## 21. [搜索二维矩阵 II](https://leetcode.cn/problems/search-a-2d-matrix-ii/)240-251216
+# 21. [搜索二维矩阵 II](https://leetcode.cn/problems/search-a-2d-matrix-ii/)240-251216
 
-#二分查找 #分治法 
+tag: 二分查找 分治法 
 
-### 思路一：Z字形查找
+## 思路一：Z字形查找
 
 最简单的想法，时间复杂度是 $O(n+m)$ 
 
@@ -991,7 +990,7 @@ class Solution:
 		return False
 ```
 
-### 思路二：二分查找
+## 思路二：二分查找
 
 ```python
 class Solution:
@@ -1031,7 +1030,7 @@ class Solution:
 		return False
 ```
 
-### 思路三：贪心Z*  从左下角开始搜索！
+## 思路三：贪心Z*  从左下角开始搜索！
 
 操了 这个和前面的 Z搜索区别在于 从左下角开始搜索，这样的话就可以沿着 减增减 的序列搜索了 可以排除更多不可能区域. 我觉得这个想法**非常好**。
 [参考题解](https://leetcode.cn/problems/search-a-2d-matrix-ii/solutions/2361487/240-sou-suo-er-wei-ju-zhen-iitan-xin-qin-7mtf)
@@ -1051,9 +1050,9 @@ class Solution:
 		return False
 ```
 
-## 22. [相交链表](https://leetcode.cn/problems/intersection-of-two-linked-lists/)160-251217
+# 22. [相交链表](https://leetcode.cn/problems/intersection-of-two-linked-lists/)160-251217
 
-### 思路一：双指针\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+## 思路一：双指针\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 
 这个太帅了
 ![](https://cdn.jsdelivr.net/gh/zip95297/zip95297.github.io@main/source/images/%E9%A2%98%E7%9B%AE%E7%AC%94%E8%AE%B0/Pasted%20image%2020251217145442.webp?raw=true)
@@ -1069,7 +1068,7 @@ class Solution:
 ```
 
 
-### 思路二：哈希
+## 思路二：哈希
 
 在这个过程中改变了list结构，这样的方法就是记录那些节点是访问过的
 可以 用一个 set 记录哪些访问过，就不用这个了 但是用 Set 需要 o(m)的空间
@@ -1095,15 +1094,15 @@ class Solution:
 		return ans
 ```
 
-### 思路三：对齐开始
+## 思路三：对齐开始
 
 先全部遍历一下，找到两个的长度，然后将较长的往前移动几个，这下 AB list 长度相同，接下来就直接一起同步 next 就可以 但是 实际时间复杂度是 O(m+2n-len(chonghe)) 
 
-## 23. [反转链表](https://leetcode.cn/problems/reverse-linked-list/)206-251217
+# 23. [反转链表](https://leetcode.cn/problems/reverse-linked-list/)206-251217
 
-#递归 #迭代 #非暴力迭代
+tag: 递归 迭代 非暴力迭代
 
-### 思路一：递归
+## 思路一：递归
 
 写递归算法时候的一定要理清思路，想好怎么递归调用的。
 
@@ -1136,7 +1135,7 @@ class Solution:
 		return tail
 ```
 
-### 思路二：迭代*：
+## 思路二：迭代*：
 
 找到head开头的链的末端 往前指 前一个指空 （这是一个$O(n^2)$的垃圾方法），好好理理下面的那个
 
@@ -1187,9 +1186,9 @@ class Solution:
             head = n
         return prev
 ```
-## 24. [回文链表](https://leetcode.cn/problems/palindrome-linked-list/)234-251217
+# 24. [回文链表](https://leetcode.cn/problems/palindrome-linked-list/)234-251217
 
-### 思路一： 栈判断
+## 思路一： 栈判断
 
 用栈判断 但是感觉写的不好 很多下标处理：
 
@@ -1222,7 +1221,7 @@ class Solution:
         return True
 ```
 
-### 思路二：复制到数组后双指针
+## 思路二：复制到数组后双指针
 
 这个方法也很快
 
@@ -1237,7 +1236,7 @@ class Solution:
         return vals == vals[::-1]
 ```
 
-### 思路三：快慢指针
+## 思路三：快慢指针
 
 反转后面部分的 list 然后再  用两个指针比较 $O(n)$ $O(1)$ 
 
@@ -1285,10 +1284,10 @@ class Solution:
         return previous
 ```
 
-## 25. [环形链表](https://leetcode.cn/problems/linked-list-cycle/)141-251217
+# 25. [环形链表](https://leetcode.cn/problems/linked-list-cycle/)141-251217
 
-#快慢指针 #集合 #重复 
-### 思路一：用集合判断是否访问过
+tag: 快慢指针 集合 重复 
+## 思路一：用集合判断是否访问过
 
 这个方法空间复杂度是 $O(n)$ ,时间复杂度也是 $O(n)$ 
 ```python
@@ -1303,7 +1302,7 @@ class Solution:
         return False
 ```
 
-### 思路二： 快慢指针*
+## 思路二： 快慢指针*
 
 $O(1)$ 空间复杂度，$O(n)$时间复杂度看是否重合。下面捋一下思路：
 对于一个有环的 list ，环外的 长度为 $x$ ，环长度 为 $L$ ，那么如果一个快指针 一次走两个，慢指针一次走一个，那么，慢的先走x，同时 相当于 快的进入环内后走了x，然后两者相遇的方程 ：$i=(x+2i)\%L$
@@ -1339,13 +1338,13 @@ class Solution:
         return False
 ```
 
-## 26. [环形链表 II](https://leetcode.cn/problems/linked-list-cycle-ii/)142-251217
+# 26. [环形链表 II](https://leetcode.cn/problems/linked-list-cycle-ii/)142-251217
 
-### 思路一：集合
+## 思路一：集合
 
 这个空间复杂度高 简单 不写了
 
-### 思路二：快慢指针*
+## 思路二：快慢指针*
 
 一个list 非环长 x 环长 L ，slow 走到环开头， fast 距离环开头 x 。此时 fast 还需要追 L-x ，由于每次 移动 fast 和 slow 的距离-=1 ，然后可以计算出 第一相遇位置，距离 环开头（倒退数） L-x （还需要L-x步，两者距离减为0），距离环结尾（前进数）x 。有了meetAt 这个点，再在 开头放置一个 ptr ，ptr 和 slow 一起同步移动，两者都移动 x 就都到了 开头。
 
@@ -1371,7 +1370,7 @@ class Solution:
 
 我觉得这两个题都很有意思
 
-## 27. [合并两个有序链表](https://leetcode.cn/problems/merge-two-sorted-lists/)21-251217
+# 27. [合并两个有序链表](https://leetcode.cn/problems/merge-two-sorted-lists/)21-251217
 
 先找到小的开头，作为 p1 然后 比较插入即可
 
@@ -1430,7 +1429,7 @@ class Solution:
         return dummy.next
 ```
 
-## 28. [两数相加](https://leetcode.cn/problems/add-two-numbers/)2-251218
+# 28. [两数相加](https://leetcode.cn/problems/add-two-numbers/)2-251218
 
 这个不难 重要的是细节处理
 
@@ -1462,7 +1461,7 @@ class Solution:
         return ans
 ```
 
-## 29. [删除链表的倒数第 N 个结点](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/)19-251218
+# 29. [删除链表的倒数第 N 个结点](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/)19-251218
 
 #快慢指针
 
@@ -1487,7 +1486,7 @@ class Solution:
         return head
 ```
 
-## 30. [两两交换链表中的节点](https://leetcode.cn/problems/swap-nodes-in-pairs/)24-251218
+# 30. [两两交换链表中的节点](https://leetcode.cn/problems/swap-nodes-in-pairs/)24-251218
 
 虽然很简单，但是感觉写的不好，可以学一下别的人代码
 
@@ -1531,7 +1530,7 @@ class Solution:
         return dummyHead.next
 ```
 
-## 31. [K 个一组翻转链表](https://leetcode.cn/problems/reverse-nodes-in-k-group/)25-251218
+# 31. [K 个一组翻转链表](https://leetcode.cn/problems/reverse-nodes-in-k-group/)25-251218
 
 上一题是这个题目 k=2 的特殊情况。用迭代的做法写，逐个找所有的k长子list 然后reverse
 
@@ -1576,7 +1575,7 @@ class Solution:
         return ans.next         
 ```
 
-## 32. [随机链表的复制](https://leetcode.cn/problems/copy-list-with-random-pointer/)138-251218-重新写
+# 32. [随机链表的复制](https://leetcode.cn/problems/copy-list-with-random-pointer/)138-251218-重新写
 
 这个方法复杂度应该是 $O(n^2)$ 先按照next 的方向复制list 然后找random 方法是 对于一个node 从两个list的头开始找，知道找origin的random 然后就把 新的random也置为这个
 
@@ -1647,7 +1646,7 @@ class Solution:
 
 必须要看看题解 然后好好做一下 这会儿太累了，之后看吧留个坑
 
-## 33. [排序链表](https://leetcode.cn/problems/sort-list/)148-251219*-重新写
+# 33. [排序链表](https://leetcode.cn/problems/sort-list/)148-251219*-重新写
 
 #并归排序
 
@@ -1755,7 +1754,7 @@ class Solution:
         return dummyHead.next
 ```
 
-## 34. [合并 K 个升序链表](https://leetcode.cn/problems/merge-k-sorted-lists/)23-251219
+# 34. [合并 K 个升序链表](https://leetcode.cn/problems/merge-k-sorted-lists/)23-251219
 
 最开始想的用单调栈 好像不可行，现在考虑用最小堆
 
@@ -1781,9 +1780,9 @@ class Solution:
         return dummy.next
 ```
 
-## 35. [LRU 缓存](https://leetcode.cn/problems/lru-cache/)146-251219
+# 35. [LRU 缓存](https://leetcode.cn/problems/lru-cache/)146-251219
 
-### 题解思路：双链表+hash
+## 题解思路：双链表+hash
 
 用collections . orderDict
 
@@ -1849,7 +1848,7 @@ class Node :
         self.prev = prev
 ```
 
-### Trash
+## Trash
 
 用队列，但是 get put 的复杂度是 O(capacity) remove 
 为什么要用双链？因为remove操作 需要 o(c) 去找到 value ，但是如果用Node，可以在字典中存入其地址。O(1) 就可以找到。
@@ -1890,10 +1889,10 @@ class LRUCache:
 ```
 
 
-## 36. [二叉树的中序遍历](https://leetcode.cn/problems/binary-tree-inorder-traversal/)94-251222
+# 36. [二叉树的中序遍历](https://leetcode.cn/problems/binary-tree-inorder-traversal/)94-251222
 
 要知道中序遍历和先序遍历的while写法是不一样的，区别在于先append还是先 访问（cur=）
-### 思路一：递归
+## 思路一：递归
 
 这个写法比较简单
 
@@ -1911,7 +1910,7 @@ class Solution:
         return ans
 ```
 
-### 思路二：迭代\*\*
+## 思路二：迭代\*\*
 
 我觉得这个迭代写的很好，下来再看看
 
@@ -1943,9 +1942,9 @@ class Solution:
             root = root.right
 ```
 
-## 37. [二叉树的最大深度](https://leetcode.cn/problems/maximum-depth-of-binary-tree/)104-251222
+# 37. [二叉树的最大深度](https://leetcode.cn/problems/maximum-depth-of-binary-tree/)104-251222
 
-### 思路一：DFS
+## 思路一：DFS
 
 ```python
 class Solution:
@@ -1953,7 +1952,7 @@ class Solution:
         if not root : return 0
         return max(self.maxDepth(root.left)+1,self.maxDepth(root.right)+1)
 ```
-### 思路二：BFS
+## 思路二：BFS
 
 ```python
 class Solution:
@@ -1977,9 +1976,9 @@ class Solution:
         return ans
 ```
 
-## 38. [翻转二叉树](https://leetcode.cn/problems/invert-binary-tree/)226-251222
+# 38. [翻转二叉树](https://leetcode.cn/problems/invert-binary-tree/)226-251222
 
-### 思路一：BFS
+## 思路一：BFS
 
 对每一个节点 进行左右节点的互换，因为所有节点只访问一次。所以可行
 
@@ -2006,7 +2005,7 @@ class Solution:
         return root
 ```
 
-### 思路二：递归
+## 思路二：递归
 
 递归的方法都比较简单
 
@@ -2023,9 +2022,9 @@ class Solution:
         return root
 ```
 
-## 39. [对称二叉树](https://leetcode.cn/problems/symmetric-tree/)101-251222
+# 39. [对称二叉树](https://leetcode.cn/problems/symmetric-tree/)101-251222
 
-### 思路一：递归
+## 思路一：递归
 
 递归的思路比较简单
 
@@ -2042,7 +2041,7 @@ class Solution:
         return self.digui(root,root)
 ```
 
-### 思路二：迭代
+## 思路二：迭代
 
 ```python
 class Solution:
@@ -2069,9 +2068,9 @@ class Solution:
 
 ```
 
-## 40. [二叉树的直径](https://leetcode.cn/problems/diameter-of-binary-tree/)543-251222
+# 40. [二叉树的直径](https://leetcode.cn/problems/diameter-of-binary-tree/)543-251222
 
-### 思路一：递归
+## 思路一：递归
 
 每一个节点的 计算出来的直径都是 左边的深度加右边的深度，只需要维护一个最大的就可以，但是这里把工具函数 以及self.ans写在solution函数内，这么做方便维护max
 
@@ -2090,11 +2089,11 @@ class Solution :
         return self.ans
 ```
 
-### 思路二：迭代
+## 思路二：迭代
 
 找深度还是递归，但是只是用BFS来更新ans 
 
-### Trash Ologn\^2
+## Trash Ologn\^2
 
 超时了，记录每个叶子节点的path 然后计算路径
 
@@ -2132,7 +2131,7 @@ class Solution:
         return ans
 ```
 
-## 41. [二叉树的层序遍历](https://leetcode.cn/problems/binary-tree-level-order-traversal/)102-251222
+# 41. [二叉树的层序遍历](https://leetcode.cn/problems/binary-tree-level-order-traversal/)102-251222
 
 BFS即可
 
@@ -2157,9 +2156,9 @@ class Solution:
         return ans
 ```
 
-## 42. [将有序数组转换为二叉搜索树](https://leetcode.cn/problems/convert-sorted-array-to-binary-search-tree/)108-251223
+# 42. [将有序数组转换为二叉搜索树](https://leetcode.cn/problems/convert-sorted-array-to-binary-search-tree/)108-251223
 
-### 思路一：递归
+## 思路一：递归
 
 一个sorted 数组转换成 树，root节点一定是mid，那么只需要向归并排序一样 依次将左右的的根节点找到即可
 
@@ -2176,11 +2175,11 @@ class Solution:
         return self.nums2tree(nums)
 ```
 
-### 题解中有别的思路基于中序遍历
+## 题解中有别的思路基于中序遍历
 
-## 43. [验证二叉搜索树](https://leetcode.cn/problems/validate-binary-search-tree/)98-251223\*\*\*
+# 43. [验证二叉搜索树](https://leetcode.cn/problems/validate-binary-search-tree/)98-251223\*\*\*
 
-### 思路一：中序遍历判断数组是否有序
+## 思路一：中序遍历判断数组是否有序
 
 ```python
 class Solution:
@@ -2202,7 +2201,7 @@ class Solution:
         return True
 ```
 
-### 思路二：递归\*\*\*
+## 思路二：递归\*\*\*
 
 我觉得这个递归有点难，需要处理 右子树的最小值不能超过root 左子树的最大值不能超过 root，学一下官方的思路。helper用来判断 一个树 是不是 BST。
 
@@ -2240,9 +2239,9 @@ class Solution:
         return isBST(root)
 ```
 
-## 44. [二叉搜索树中第 K 小的元素](https://leetcode.cn/problems/kth-smallest-element-in-a-bst/)230-251223
+# 44. [二叉搜索树中第 K 小的元素](https://leetcode.cn/problems/kth-smallest-element-in-a-bst/)230-251223
 
-### 思路一：中序遍历
+## 思路一：中序遍历
 
 将二叉查找树转换成数组 $O(n)$ 然后 查找一次即可 下面是递归写法
 
@@ -2280,13 +2279,13 @@ class Solution:
             root = root.right
 ```
 
-### 思路二：记录node 的节点数（看题解）下面这两个还是学一下吧
+## 思路二：记录node 的节点数（看题解）下面这两个还是学一下吧
 
-### 思路三：转成AVL平衡二叉树（看题解）
+## 思路三：转成AVL平衡二叉树（看题解）
 
-## 45. [二叉树的右视图](https://leetcode.cn/problems/binary-tree-right-side-view/)199-251223
+# 45. [二叉树的右视图](https://leetcode.cn/problems/binary-tree-right-side-view/)199-251223
 
-### 思路一：BFS
+## 思路一：BFS
 
 通过BFS把每一行加入队列的最后一个记录下来。
 ```python
@@ -2309,7 +2308,7 @@ class Solution:
         return ans
 ```
 
-### 思路二：DFS\*\*\*\* 之前都没写过DFS，DFS使用stk 把左右加进来
+## 思路二：DFS\*\*\*\* 之前都没写过DFS，DFS使用stk 把左右加进来
 
 在深度优先搜索时 如果优先搜索 右侧节点，那么每层访问的第一个 节点 一定是最右侧的节点，那么我们可以记录一个深度。遇到第一个这个深度的节点，就记录下来。下面是题解的做法 ：
 ```python
@@ -2336,9 +2335,9 @@ class Solution:
 ```
 要知道中序遍历和先序遍历的while写法是不一样的，区别在于先append还是先 访问（cur=）
 
-## 46. [二叉树展开为链表](https://leetcode.cn/problems/flatten-binary-tree-to-linked-list/)114-251223
+# 46. [二叉树展开为链表](https://leetcode.cn/problems/flatten-binary-tree-to-linked-list/)114-251223
 
-### Trash 用了新的空间
+## Trash 用了新的空间
 
 ```python
 class Solution:
@@ -2363,7 +2362,7 @@ class Solution:
         root.left = None
 ```
 
-### 思路一：存下来prev
+## 思路一：存下来prev
 
 因为cur已经被访问过了所以可以修改了，prev执指向现在cur 就可以修改其左右叶子值了
 ```python
@@ -2384,7 +2383,7 @@ class Solution:
 ```
 
 
-### 思路二：找到前驱节点\*\*\*
+## 思路二：找到前驱节点\*\*\*
  
  这个题题解的方法也很多，之后仔细看一下。下面这个方法是常数空间复杂度的方法
  
@@ -2403,9 +2402,9 @@ class Solution:
             curr = curr.right
 ```
 
-## 47. [从前序与中序遍历序列构造二叉树](https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)105-251223
+# 47. [从前序与中序遍历序列构造二叉树](https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)105-251223
 
-### 思路一：递归（没看
+## 思路一：递归（没看
 
 终点在于根据 index i 找到 preorder的左右 但是这个递归还是很慢 也是 Trash
 
@@ -2478,7 +2477,7 @@ class Solution:
 
 ```
 
-### 思路二：迭代（没看
+## 思路二：迭代（没看
 
 ```python
 class Solution:
@@ -2505,7 +2504,7 @@ class Solution:
         return root
 ```
 
-### Trash：递归拆分先序nums时候超时
+## Trash：递归拆分先序nums时候超时
 
 答案对但是超时了
 
@@ -2530,9 +2529,9 @@ class Solution:
         return TreeNode(preorder[0],self.buildTree(left_preorder,left_inorder),self.buildTree(right_preorder,right_inorder))
 ```
 
-## 48. [路径总和 III](https://leetcode.cn/problems/path-sum-iii/)437-251224
+# 48. [路径总和 III](https://leetcode.cn/problems/path-sum-iii/)437-251224
 
-### 思路一：前缀和\*
+## 思路一：前缀和\*
 
 $O(n)$ 用递归深度搜索 去遍历所有节点，记录前缀和，然后用hash来找到对应的，如果找到就把他拿出。那么最大的问题是：例如根节点，hash中记录了左子树的所有需要的哈希值，然后对于右子树 如果查到，就会出现一条通过root的路径，解决办法就是：记录的 （需要找到的）prefix+sum 只在子树范围内生效。（我觉得也是这个题的难点）
 hash中记录的是，prefix+sum（像两数之和一样，遇到val 就查 target-val在不在。但是这个是两数之差）。
@@ -2561,7 +2560,7 @@ class Solution:
         return self.ans
 ```
 
-### 思路二：深度优先搜索-非最优
+## 思路二：深度优先搜索-非最优
 
 这个思路没啥用我觉得 时间复杂度是 $O(n^2)$ 上一个复杂度是 $O(n)$ 这个思路就是写一个helper 用于找到起点为root的所有和为sum 的path数量，然后（DFS）遍历所有的node 得到所有path
 
@@ -2580,7 +2579,7 @@ class Solution:
         ans += self.pathSum(root.right,targetSum)
         return ans
 ```
-### Trash 迭代前缀和
+## Trash 迭代前缀和
 
 先尝试了用迭代方法去写前缀和：跑不通。接下来尝试用递归去求
 
@@ -2629,9 +2628,9 @@ def DFS(root):
     print(root.val)
     DFS(root.right)
 ```
-## 49. [二叉树的最近公共祖先](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/)236-251224
+# 49. [二叉树的最近公共祖先](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/)236-251224
 
-### 思路一：记录所有节点的father，然后用set查
+## 思路一：记录所有节点的father，然后用set查
 
 1.先用DFS遍历树，然后记录每个节点的father  2.把p的所有father存在在个set   3.遍历q的father（从q开始）遇到 在 set:p.fathers 中的节点就返回
 
@@ -2656,7 +2655,7 @@ class Solution:
             q = q.father
 ```
 
-### 思路二：递归
+## 思路二：递归
 
 写一个工具函数判断 这个root节点为根的树中包不包含 p，q ，那么最后结果一定是 ans 包含，ans的左右孩子都不包含，下面是自己的写法，但是感觉把问题写复杂了，之后可以学习一下题解的写法。
 
@@ -2718,9 +2717,9 @@ class Solution:
         return left or right
 ```
 
-## 50. [二叉树中的最大路径和](https://leetcode.cn/problems/binary-tree-maximum-path-sum/)124-251224
+# 50. [二叉树中的最大路径和](https://leetcode.cn/problems/binary-tree-maximum-path-sum/)124-251224
 
-### 思路一：递归-从trash优化过来的
+## 思路一：递归-从trash优化过来的
 
 在trash中 每次求解 root 树的最大路径 都要再递归找各个节点的 路径，对这个做法优化：在一个递归中得到 从一个节点开始的最大值 ，这样不用每次找一个节点都要找。而是存在一个属性内
 
@@ -2781,7 +2780,7 @@ class Solution:
         return self.ans
 ```
 
-### Trash: 超时了
+## Trash: 超时了
 
 第一想法是这样的 但是有两层递归 $O(n^2)$ 太慢了
 
@@ -2800,9 +2799,9 @@ class Solution:
         return max(start_root,self.maxPathSum(root.left) if root.left else -1001,self.maxPathSum(root.right) if root.right else -1001)
 ```
 
-## 51. [岛屿数量](https://leetcode.cn/problems/number-of-islands/)200-251224
+# 51. [岛屿数量](https://leetcode.cn/problems/number-of-islands/)200-251224
 
-### 思路一：DFS
+## 思路一：DFS
 
 深度搜索，处理越界。如果还是1则置为已经遍历过
 
@@ -2826,7 +2825,7 @@ class Solution:
         return ans
 ```
 
-### 思路二：BFS 队列和栈 在入的时候就标记
+## 思路二：BFS 队列和栈 在入的时候就标记
 
 发现一个问题：如果这么写的话会超时 因为同一个点多次入队。
 
@@ -2874,11 +2873,11 @@ class Solution:
         return ans
 ```
 
-### 思路三：并查集
+## 思路三：并查集
 
 看题解吧，这一次没写这个
 
-### 类似题目[岛屿的周长](https://leetcode.cn/problems/island-perimeter/)
+## 类似题目[岛屿的周长](https://leetcode.cn/problems/island-perimeter/)
 
 ```python
 class Solution:
@@ -2901,9 +2900,9 @@ class Solution:
         return self.ans
 ```
 
-## 52. [腐烂的橘子](https://leetcode.cn/problems/rotting-oranges/)994-251224
+# 52. [腐烂的橘子](https://leetcode.cn/problems/rotting-oranges/)994-251224
 
-### 思路：多源广度优先搜索
+## 思路：多源广度优先搜索
 
 把多个2加入到一个list里面 然后从这一个list开始BFS 而不是一个单一的点
 
@@ -2942,7 +2941,7 @@ class Solution:
         return ans
 ```
 
-### Trash: 单源广度优先搜索
+## Trash: 单源广度优先搜索
 
 ```python
 class Solution:
@@ -2986,7 +2985,7 @@ class Solution:
         return max(mp.values()) if mp.values() else 0
 ```
 
-## 53. [课程表](https://leetcode.cn/problems/course-schedule/)207-251224\*\*\*\*\*\*\*\*\*\*两个方法
+# 53. [课程表](https://leetcode.cn/problems/course-schedule/)207-251224\*\*\*\*\*\*\*\*\*\*两个方法
 
 这个题目主要是要判断 依赖关系组成的单链表（hash）中有没有环，先看一下拓扑排序[课程表 II](https://leetcode.cn/problems/course-schedule-ii/) 
 
@@ -3003,7 +3002,7 @@ class Solution:
 		
 ```
 
-### 思路一：DFS
+## 思路一：DFS
 
 拓扑排序 省去了排序 只判断环
 
@@ -3028,7 +3027,7 @@ class Solution:
         return True
 ```
 
-### 思路二：BFS
+## 思路二：BFS
 
 ```python
 class Solution:
@@ -3056,7 +3055,7 @@ class Solution:
         return visited == numCourses
 ```
 
-### 课程表II-DFS
+## 课程表II-DFS
 
 ```python
 class Solution:
@@ -3090,6 +3089,298 @@ class Solution:
         
 ```
 
-## 54. [实现 Trie (前缀树)](https://leetcode.cn/problems/implement-trie-prefix-tree/)208-251225
+# 54. [实现 Trie (前缀树)](https://leetcode.cn/problems/implement-trie-prefix-tree/)208-251225
+
+插入和查找 用 dict 就可以简单实现，所以关键点在于 startWith 
+如果用暴力的方法那么如下，这个方法的 startwith是不可接受的（1750ms），能不能用一个新的结构来做呢？
+```python
+class Trie:
+
+    def __init__(self):
+        self.list = []
+
+    def insert(self, word: str) -> None:
+        self.list.append(word)
+
+    def search(self, word: str) -> bool:
+        return word in self.list
+
+    def startsWith(self, prefix: str) -> bool:
+        lp = len(prefix)
+        for v in self.list :
+            p = v[0:min(lp,len(v))]
+            if p == prefix :
+                return True
+        return False
+```
+
+稍微为字典优化一下就变成：75ms 还是挺慢的 正态mu是56
+```python
+class Trie:
+
+    def __init__(self):
+        self.list = {}
+
+    def insert(self, word: str) -> None:
+        self.list[word] = True
+        sub = ''
+        for c in word :
+            sub+=c
+            if sub not in self.list.keys() :
+                self.list[sub] = False
+
+    def search(self, word: str) -> bool:
+        if word not in self.list.keys() :
+            return False
+        return self.list[word]
+
+    def startsWith(self, prefix: str) -> bool:
+        return prefix in self.list.keys()
+```
+
+## 思路：字典树
+
+字典套字典感觉太难理解了
+
+### 不好的写法
+递归insert字典树 感觉有点慢 5.24%
+```python
+def c2i(char) -> int :
+    return 0 if char=='#' else ord(char) -ord('a') + 1
+
+class Trie:
+    def __init__(self):
+        self.next = [ None ] * 27
+    def insert(self, word: str) -> None:
+        if not word : return
+        if word[-1] != '#' : word += '#'
+        node = Trie() if not self.next[c2i(word[0])] else self.next[c2i(word[0])]
+        node.insert(word[1:])
+        self.next[c2i(word[0])] = node
+
+    def search(self, word: str) -> bool:
+        return self.startsWith(word+'#')
+
+    def startsWith(self, prefix: str) -> bool:
+        node = self
+        for c in prefix :
+            i = c2i(c)
+            node = node.next[i]
+            if not node : return False
+        return True
+```
+### 好的写法之后再写一遍
+```python
+class Trie:
+    def __init__(self):
+        self.trie = {}
+    
+    def insert(self, word: str) -> None:
+        node = self.trie
+        for char in word:
+			####### 下面这一行是重点 如果 char 在key中 就返回node[char] 
+			####### 如果不在 就node[char]={}再返回
+            node = node.setdefault(char, {})
+        node['#'] = True  # 标记单词结束
+    
+    def search(self, word: str) -> bool:
+        return self.startsWith(word+'#')
+
+    def startsWith(self, prefix: str) -> bool:
+        node = self.trie
+        for char in prefix:
+            if char not in node:
+                return False
+            node = node[char]
+        return True
+```
+
+# 55. [全排列](https://leetcode.cn/problems/permutations/)46-251225
+
+复杂度是 $O(n!)$ 
+
+用递归做
+```python
+def Digui(nums):
+    ans = []
+    if len(nums) == 1 :
+        return [[nums[0]]]
+    for i in range(len(nums)) :
+        cp = nums[:]
+        t = cp[0]
+        cp[0] = cp[i]
+        cp[i] = t
+        sub_ans = Digui(cp[1:])
+        for b in  sub_ans :
+            a = [cp[0]] + b
+            ans.append(a)
+    return ans
+
+class Solution:
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        return Digui(nums)
+```
+
+题解的做法：
+```python
+class Solution:
+    def permute(self, nums: List[int]) -> List[List[int]] :
+        # index 尾巴 全排列
+        def dfs(index):
+            if index == len(nums):
+                return res.append(nums[:])
+            for i in range(index , len(nums)):
+                nums[i],nums[index] = nums[index],nums[i]
+                dfs(index+1)
+                nums[index],nums[i] = nums[i],nums[index]
+        res = []
+        dfs(0)
+        return res  
+```
+
+# 56. [子集](https://leetcode.cn/problems/subsets/)78-251229
+
+递归，和上一个思路一样。但是这个是组合  把输出分成 1和 后面的 先求解 digui(后面的) 然后再在后面的解中每个和1 结合，加上 后面的解 就是 一个完成的解
+```python
+def Digui(nums) :
+    print(nums)
+    if len(nums)==1 :
+        return [nums,[]]
+    sub_ans = Digui(nums[1:])
+    ans = sub_ans[:]
+    # print(sub_ans)
+    for s in sub_ans :
+        a = [nums[0]] + s
+        print(f'-- {a} {[nums[0]]} {s}')
+        ans.append(a)
+    # print(ans)
+    return ans
+
+class Solution:
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        return Digui(nums)
+```
+
+# 57. [电话号码的字母组合](https://leetcode.cn/problems/letter-combinations-of-a-phone-number/)17-20251229
+
+递归
+
+```python
+mp = {
+    2:['a','b','c'],
+    3:['d','e','f'],
+    4:['g','h','i'],
+    5:['j','k','l'],
+    6:['m','n','o'],
+    7:['p','q','r','s'],
+    8:['t','u','v'],
+    9:['w','x','y','z'],
+}
+
+def c2i(char) :
+    return ord(char)-ord('0')
+
+def Digui(str):
+    index,remain = c2i(str[0]),str[1:]
+    wl = mp[index]
+    if len(remain) == 0 :
+        return wl
+    sub_ans = Digui(remain)
+    ans = []
+    for sub in sub_ans :
+        for c in wl :
+            ans.append(c+sub)
+    return ans
+
+class Solution:
+    def letterCombinations(self, digits: str) -> List[str]:
+        return Digui(digits)
+```
+
+# 58. [组合总和](https://leetcode.cn/problems/combination-sum/)39-20251229\* 跳过了 之后自己写一下
+
+这个是最快的解法
+```python
+class Solution:
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        def backtrack(summ,startIndex):
+            if summ == target:
+                res.append(path[:])
+                return
+            for i in range(startIndex,n):
+                if summ + candidates[i] > target:
+                    break
+                path.append(candidates[i])
+                backtrack(summ+candidates[i],i)
+                path.pop()
 
 
+        res=[]
+        path = []
+        n = len(candidates)
+        candidates.sort()
+        summ,startIndex = 0,0
+        backtrack(summ,startIndex)
+        return res
+```
+
+
+# 59. [括号生成](https://leetcode.cn/problems/generate-parentheses/)22-20251230
+
+## 思路一：动态规划 递归
+这个递归的思路可以看看 重点在于 把每个问题 拆分成 (a)b 找到 ab的子问题，ab可以为空。我觉得本质还是递归，不太懂跟动态规划有什么具体关系，下次刷到可以再想想。我现在刚演完元旦晚会，好饿20251230210208
+另外关于拆分子问题这个，其实就是 n-1 对的 sub_ans 然后把这一对新的括号加在任意的位置
+```python
+class Solution:
+    @lru_cache(None)
+    def generateParenthesis(self, n: int) -> List[str]:
+        if n == 0:
+            return ['']
+        ans = []
+        for c in range(n):
+            for left in self.generateParenthesis(c):
+                for right in self.generateParenthesis(n-1-c):
+                    ans.append('({}){}'.format(left, right))
+        return ans
+```
+
+## 别的思路
+递归得到所有的 组合，然后用一个函数遍历测试对不对，但是这个复杂度有指数项 不好。
+
+# 60. [单词搜索](https://leetcode.cn/problems/word-search/)79-20251230
+
+## Trash-DFS
+
+这个方法的时间完全不能接受，找到开头，然后dfs所有的path
+
+```python
+class Solution:
+    def exist(self, board: List[List[str]], word: str) -> bool:
+        r = len(board)
+        c = len(board[0])
+        def dfs(i,j,target) :
+            cur_char = board[i][j]
+            board[i][j] = '#'
+            if len(target) == 1 : 
+                board[i][j] = cur_char
+                return cur_char == target
+            target_char, next_target_char = target[0], target[1]
+            if cur_char != target_char : 
+                board[i][j] = cur_char
+                return False
+            for t in [(i+1,j),(i-1,j),(i,j+1),(i,j-1)] :
+                u,v = t[0],t[1]
+                if 0 <= u < r and 0 <= v < c and board[u][v] != '#' :
+                    if dfs(u,v,target[1:]) : return True
+            board[i][j] = cur_char
+            return False
+
+        for i in range(r) :
+            for j in range(c) :
+                if board[i][j] == word[0] and dfs(i,j,word) : return True
+        return False
+```
+
+## 题解方法
+
+todo

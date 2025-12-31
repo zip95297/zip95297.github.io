@@ -9,8 +9,7 @@ tags:
 categories: 实用技巧
 comments: true
 ---
-# LeetCode Hot 100
-
+这个笔记用来记录 第一次刷 LeetCode Hot 100
 # 1. [两数之和](https://leetcode.cn/problems/two-sum/)1-251210
 
 tag: 哈希表
