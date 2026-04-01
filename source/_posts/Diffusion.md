@@ -1,0 +1,75 @@
+---
+title: "Diffusion相关知识"
+date: 2025-10-08 04:03:25
+updated: 2025-10-18 16:42:19
+mathjax: true
+tags: 
+    - 深度学习
+    - Diffusion
+categories: 深度学习
+comments: false
+---
+# Diffusion学习
+
+- [x] [知乎DDIM&DDPM](https://zhuanlan.zhihu.com/p/666552214)
+- [x] [HuggingFace Diffusion公开课](https://github.com/huggingface/diffusion-models-class.git)
+- [x] [b站讲的很好的DDPM](https://www.bilibili.com/video/BV1p24y1K7Pf/?vd_source=fc131029c76216a5e8da1df9dbb8fea1)
+
+# HuggingFace Diffusion Models Course
+
+[HuggingFace Diffusion公开课](https://github.com/huggingface/diffusion-models-class.git)
+
+# DDPM - Denoising Diffusion Probabilistic Models
+
+DDPM 用 $x_t$ 找到 $x_{t-1}$ 的**分布**，再从这个分布中**采样**得到一个 $x_{t-1}$，循环往复就得到了一个 $x_0$。
+
+为什么推理速度慢：
+
+- DDPM 有一个超参数 $T$，马尔可夫链（Markov chain）的总长度（通常 $T=1000$），需要采样1000步才能得到一个好的图像。
+
+- $T$ 设置小一些（如100或50）不能加速的原因如下：
+    由DDPM中单步加噪公式：
+    $$x_t=\sqrt{\alpha_t}x_{t-1}+\sqrt{1-\alpha_t}\epsilon$$
+    根据马尔可夫性质，可以由 $x_0$ 一步得到 $x_t$，每次增加一个很小的噪声：
+    $$x_t=\sqrt{\bar{\alpha}_t}x_{0}+\sqrt{1-\bar{\alpha}_t}\epsilon\ , \quad \bar{\alpha}_t=\alpha_1\alpha_2\alpha_3...\alpha_{t-1}\alpha_t$$
+    其中希望 $\alpha_t \rightarrow 1, \alpha_t \lt 1$（可能取 0.9），在单步加噪时候尽量保留原图的样子，然后加一个很小的噪声。    
+    同时，希望 $\bar{\alpha}_T \rightarrow 0$ 这样 $x_T \rightarrow \epsilon \sim \mathcal{N}(0,1)$，这样这个马尔可夫链的末端就是一个标准正态分布。要想满足上面两点，$T$ 必须足够大，所以不能减小 $T$ 的设定值。
+
+- 能不能跳步 reverse？（例如 $x_T \rightarrow x_{T-5} \rightarrow ... \rightarrow x_0$）    
+    不能，原因如下：
+    DDPM的目标是为了拟合一个概率分布 $p(x_{t-1}|x_0,x_t)$，这个目标分布（后验分布）通过贝叶斯公式推导为严格的高斯分布：
+    $$p(x_{t-1} \mid x_t, x_0) = \mathcal{N}(x_{t-1}; \tilde{\mu}_t(x_t, x_0), \tilde{\beta}_t I)$$
+    其中均值 $\tilde{\mu}_t = \frac{\sqrt{\alpha_t}(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t} x_t + \frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1-\bar{\alpha}_t} x_0$。
+    该数学推导**强依赖于马尔可夫假设**。在马尔可夫链中，当前状态的转移只与严格相邻的前一个状态有关。如果强制跨步（跳过中间的 $t$），则破坏了马尔可夫链的转移概率结构，导致网络预测的单步噪声 $\epsilon_\theta$ 无法匹配跨步后的真实后验分布，从而引发严重的误差累积。
+
+# DDIM - Denoising Diffusion Implicit Models
+
+
+**核心思想：打破马尔可夫假设**
+
+DDIM 的核心贡献在于证明了：只要前向过程的边缘分布 $q(x_t|x_0)$ 与 DDPM 保持一致（即 $x_t$ 仍然可以写成 $\sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon$），就可以构造出非马尔可夫的前向过程。这种构造使得模型可以使用与 DDPM 完全一致的目标函数进行训练，但在采样时解除了严格的步步相连限制。
+
+**采样公式重构**
+
+DDIM 推导出了一个新的广义反向采样公式：
+
+$$x_{t-1} = \sqrt{\bar{\alpha}_{t-1}} \underbrace{\left( \frac{x_t - \sqrt{1 - \bar{\alpha}_t} \epsilon_\theta(x_t, t)}{\sqrt{\bar{\alpha}_t}} \right)}_{\text{预测的 } x_0} + \underbrace{\sqrt{1 - \bar{\alpha}_{t-1} - \sigma_t^2} \cdot \epsilon_\theta(x_t, t)}_{\text{指向 } x_t \text{ 的方向}} + \underbrace{\sigma_t \epsilon_t}_{\text{随机噪声}}$$
+
+该公式逻辑上分为三项：
+
+1. 用当前 $x_t$ 和网络预测的噪声去估算出的原图 $x_0$。
+2. 指向 $x_t$ 方向的梯度修正项。
+3. 注入的方差大小为 $\sigma_t$ 的随机噪声。
+
+**超参数 $\sigma_t$ 的意义** : $\sigma_t$ 决定了生成过程的随机性：
+- 当 $\sigma_t = \sqrt{\frac{1-\bar{\alpha}_{t-1}}{1-\bar{\alpha}_t}} \sqrt{1-\frac{\bar{\alpha}_t}{\bar{\alpha}_{t-1}}}$ 时：公式退化回标准的 **DDPM**，具备完整的随机性。
+- 当 $\sigma_t = 0$ 时：随机噪声项消失，整个逆向生成过程变成**确定性**的（Deterministic）。这就是 **DDIM**。由于它是确定性常微分方程（ODE）的近似求解，给定相同的初始噪声 $x_T$，最终生成的 $x_0$ 是固定的。
+
+**为什么 DDIM 可以跳步加速？**
+
+因为 DDIM 的生成公式只依赖于时间步 $t$ 和 $t-1$ 对应的先验参数 $\bar{\alpha}$（而不是像 DDPM 那样依赖 $\alpha_t$ 的马尔可夫单步递推），我们完全可以定义一个更短的时间步子序列 $\tau$（例如 $S=50$，序列为 $\tau_1, \tau_2, ..., \tau_S$）。
+
+在跳步采样时，只需将公式中的 $t$ 和 $t-1$ 替换为子序列中的相邻步 $\tau_i$ 和 $\tau_{i-1}$：
+
+$$x_{\tau_{i-1}} = \sqrt{\bar{\alpha}_{\tau_{i-1}}} \left( \frac{x_{\tau_i} - \sqrt{1 - \bar{\alpha}_{\tau_i}} \epsilon_\theta(x_{\tau_i}, \tau_i)}{\sqrt{\bar{\alpha}_{\tau_i}}} \right) + \sqrt{1 - \bar{\alpha}_{\tau_{i-1}} - \sigma_{\tau_i}^2} \cdot \epsilon_\theta(x_{\tau_i}, \tau_i) + \sigma_{\tau_i} \epsilon$$
+

@@ -1,0 +1,85 @@
+---
+title: "nanovllm相关"
+date: 2026-04-02 04:34:18
+updated: 2026-04-02 04:34:18
+mathjax: true
+tags: 
+    - 深度学习
+categories: 深度学习
+comments: false
+---
+# 模型架构与 FlashAttention 底层优化解析
+
+以下是对推理引擎中模型架构与注意力机制核心算子的技术推演与重构，侧重于计算瓶颈的分析、数学逻辑的推导以及硬件层面的 Trade-off。
+
+## 1. 模型架构配置分析
+
+根据提取的维度信息（16 个 Q Head，8 个 KV Head，Head Dim = 128），该模型采用了 **GQA (Grouped Query Attention)** 架构，Q 与 KV 的比例为 2:1。
+![[Pasted image 20260306195828.png]]
+
+- **基础设施影响**：相较于传统的 MHA (Multi-Head Attention)，GQA 是推理阶段（尤其是 Decode 阶段）缓解 Memory Bound 的关键设计。KV Cache 的显存占用直接减少了 50%，极大降低了显存带宽的读写压力，并允许系统维持更大的 Batch Size 从而提升系统吞吐。
+    
+- **归一化选择**：采用 **RMSNorm** 替代 LayerNorm，移除了均值计算（Mean-centering），在保证模型收敛和精度的前提下，减少了规约操作（Reduction）的开销，提升了前向推理的速度。
+    
+
+## 2. 标准 Attention 的硬件瓶颈 (Memory Wall)
+
+传统 Attention 的计算流程受制于 GPU 的内存层级架构（HBM 与 SRAM 的速度差）。核心问题在于 IO Bound，而非 Compute Bound。
+
+![[Pasted image 20260309203632.png]]
+对于序列长度为 $N$，特征维度为 $d$ 的输入：
+
+1. **读 Q, K**：从 HBM 读取所需数据，计算注意力分数矩阵 $S = QK^T$。
+2. **写 S**：将 $N \times N$ 的 $S$ 矩阵写入 HBM。
+3. **读 S, 写 P**：读取 $S$，计算 $P = \text{Softmax}(S)$，写回 HBM。
+4. **读 P, 读 V**：读取 $P$ 和 $V$，计算输出 $O = PV$。
+5. **写 O**：将 $N \times d$ 的 $O$ 写回 HBM。
+
+其访存复杂度（IO Complexity）为 $O(Nd + N^2)$。当 $N$ 增大时（长上下文），对 $N \times N$ 尺寸的中间矩阵 $S$ 和 $P$ 的频繁 HBM 读写会彻底打满显存带宽，导致计算单元（SM）处于长时间的等待状态（空转）。
+
+## 3. FlashAttention 核心解法之一：Online Softmax
+
+为了消除 $O(N^2)$ 的中间矩阵存储，FlashAttention 通过分块计算（Tiling）将整个过程融合（Fusion）为一个算子。这里的数学难点在于 Softmax 的分母需要全局信息，无法直接分块计算。
+
+![[Pasted image 20260309204255.png]]
+
+Online Softmax 的核心思想是：**维护局部最大值和局部指数和，当引入新块时，通过缩放（Rescaling）修正历史结果**。
+
+假设我们将输入分成多个块。对于第 $k$ 个块，我们计算并维护三个局部变量：
+
+- **局部最大值**：$m^{(k)} = \max(x^{(k)})$
+- **局部指数和**：$l^{(k)} = \sum e^{x^{(k)} - m^{(k)}}$
+- **未归一化的输出值**：$\tilde{O}^{(k)}$
+
+当第 $k$ 块计算完成，接下来要合并第 $k+1$ 块时，递推更新逻辑如下：
+
+1. **更新全局最大值**：
+    $$m_{new} = \max(m^{(k)}, m^{(k+1)})$$
+2. **修正历史指数和并更新总和**：
+    原有的和 $l^{(k)}$ 是基于旧的最大值 $m^{(k)}$ 计算的，需要乘上衰减因子 $e^{m^{(k)} - m_{new}}$ 进行修正。
+    $$l_{new} = l^{(k)} \cdot e^{m^{(k)} - m_{new}} + l^{(k+1)} \cdot e^{m^{(k+1)} - m_{new}}$$
+3. **修正历史输出并累加新块**：
+    原有的未归一化输出同样需要用衰减因子修正，再加上新块的贡献。
+    $$\tilde{O}_{new} = \tilde{O}^{(k)} \cdot e^{m^{(k)} - m_{new}} + \tilde{O}^{(k+1)} \cdot e^{m^{(k+1)} - m_{new}}$$
+
+在所有分块遍历完成后，只需要执行一次最终的除法 $\tilde{O}_{final} / l_{final}$，即可得到完全正确的 Softmax 结果。这个过程避免了任何全局 $N \times N$ 矩阵的物化（Materialization）。
+
+## 4. FlashAttention 核心解法之二：Tiling 与硬件映射
+
+有了 Online Softmax 的数学基础，就可以将计算逻辑映射到硬件上，最大化利用 SRAM。
+
+- **内存分配**：SRAM 的空间有限。需要根据 SRAM 大小设定分块参数 $B_r$（行块大小，对应 Q）和 $B_c$（列块大小，对应 K 和 V）。在 SRAM 中只需分配能够容纳下 $Q_{block}, K_{block}, V_{block}$ 以及 $O_{block}$ 的空间。对于 FP16，占用大致为 $\frac{M}{4d \times 2}$。
+
+- **双层循环调度**：
+    1. 外层循环：遍历 KV 的块。将 $K_{block}$ 和 $V_{block}$ 从 HBM 加载到 SRAM。
+    2. 内层循环：遍历 Q 的块。将 $Q_{block}$ 加载到 SRAM，与 $K_{block}$ 计算局部 $S_{block}$。
+    3. 立即在 SRAM 中执行 Online Softmax 更新，随后乘上 $V_{block}$ 更新 $O_{block}$。
+	4. （但是 innerloop 每次结束 都要写 Oml 下次还要返回，所以v2 在Q tiling 并行，遍历KV 不用反复读写Olm，更快切减小溢出风险。）
+
+## 5. 思考
+
+**用计算换 IO (Compute for Memory)**
+
+FlashAttention 实际上**增加**了总的浮点运算次数（FLOPs）。因为在 Online Softmax 中引入了大量的 $e^{m_1 - m_2}$ 标量乘法与缩放操作，并且在反向传播（Backward）阶段，由于没有存储 $P$ 和 $S$，必须再前向重算一次 Attention。
+
+之所以这种策略能带来数倍的速度提升，是因为在当前及未来的 GPU 架构中，**算力（TFLOPS）的增长速度远超显存带宽（GB/s）的增长**。通过增加常数级别的计算量，彻底消灭了 $O(N^2)$ 的 HBM 读写（将其降为 $O(N^2 d^2 / M)$），这是一个在推理引擎底层架构设计中极其划算的 Trade-off。

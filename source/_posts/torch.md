@@ -1,0 +1,286 @@
+---
+title: "SwinIR中相关基础Torch操作"
+date: 2025-03-16 03:52:59
+updated: 2025-03-18 13:21:13
+mathjax: true
+tags: 
+    - 深度学习
+categories: 深度学习
+comments: false
+---
+# 概念
+
+  
+
+## 归一化
+
+  
+
+将不同尺度或单位的数据，按一定规则转换到相同尺度下，常用于数据预处理，使其具有统一的分布范围或特性，便于后续的处理或分析。
+
+  
+
+归一化主要是为了加速收敛（不同特征数值范围差异大时梯度下降会震荡）、避免数值问题（防止某些特征因数值过大而主导梯度更新）。
+
+  
+
+常见的归一化方法：
+
+  
+
+**最大最小归一化（Min-Max）**
+
+$$x'=\cfrac{x-x_{min}}{x_{max}-x_{min}}$$
+
+把数据线性放缩到 [0,1] 区间，保留原始分布形状，但对异常值敏感
+
+  
+
+**Z-score 标准化**
+
+$$x'=\cfrac{x-\mu}{\sigma}$$
+
+把数据转换成均值为 0、标准差为 1 的分布 N(0,1)，对异常值更鲁棒。PyTorch 中的 normalization 默认用这个。
+
+  
+
+**L2 归一化**
+
+$$x'=\cfrac{x}{\|x\|_2}$$
+
+将向量归一化到单位球面上，常用于特征向量归一化
+
+# 相关函数
+
+  
+
+## nn.LayerNorm
+
+  
+
+输入是 `[B, N, D]`
+
+- B：Batch size，一个批次中的样本数量
+
+- N：Sequence length，一个样本中的 token 数量
+
+- D：Embedding dimension，每个 token 的 embedding 维度
+
+  
+
+LayerNorm 对每个样本的每个 token 的 embedding 向量独立做 Z-score 归一化（不跨样本，不跨 token）
+
+  
+
+$$
+\mu_{b,n} = \frac{1}{D} \sum_{d=1}^{D} x_{b,n,d} \quad \quad \sigma_{b,n}^2 = \frac{1}{D} \sum_{d=1}^{D} (x_{b,n,d} - \mu_{b,n})^2
+$$
+
+  
+
+$$
+y_{b,n,d} = \gamma \cdot \frac{x_{b,n,d} - \mu_{b,n}}{\sqrt{\sigma_{b,n}^2 + \epsilon}} + \beta
+$$
+
+  
+
+其中 $\gamma$ 和 $\beta$ 是可学习的仿射变换参数，$\epsilon$ 防止除零（默认 1e-5）
+
+  
+
+使用时要指定 `normalized_shape` 为 embedding 维度：
+
+```python
+
+layer_norm = nn.LayerNorm(normalized_shape=512)
+
+x = torch.randn(32, 128, 512) # [batch, seq_len, emb_dim]
+
+output = layer_norm(x)
+
+```
+
+  
+
+LN 抹平了不同样本之间的大小关系，保留了不同特征维度之间的相对关系。所以更适合 NLP 任务，一个样本的特征就是不同 token 的 embedding，LN 保留了特征之间的时序关系。Transformer 基本都用 LayerNorm。
+
+  
+
+好处是不受 batch size 影响，batch=1 也能正常工作，训练和推理行为一致。
+
+## nn.BatchNorm
+
+  
+
+输入是 `[B, C, H, W]`（图像）或 `[B, C, L]`（序列）
+
+- B：Batch size
+
+- C：Channel，通道数
+
+- H, W：图像的高度和宽度
+
+- L：序列长度
+
+  
+
+BatchNorm 对一个 batch 的所有样本在每个通道上做归一化，也就是对每个通道计算所有样本的均值和方差。
+
+  
+
+对于图像数据：
+
+$$
+\mu_c = \frac{1}{B \cdot H \cdot W} \sum_{b=1}^{B} \sum_{h=1}^{H} \sum_{w=1}^{W} x_{b,c,h,w}
+$$
+
+  
+
+$$
+\sigma_c^2 = \frac{1}{B \cdot H \cdot W} \sum_{b=1}^{B} \sum_{h=1}^{H} \sum_{w=1}^{W} (x_{b,c,h,w} - \mu_c)^2
+$$
+
+  
+
+$$
+\hat{x}_{b,c,h,w} = \gamma_c \cdot \frac{x_{b,c,h,w} - \mu_c}{\sqrt{\sigma_c^2 + \epsilon}} + \beta_c
+$$
+
+  
+
+其中 $\gamma_c$ 和 $\beta_c$ 是每个通道的可学习参数
+
+  
+
+使用：
+
+```python
+
+batch_norm = nn.BatchNorm2d(num_features=64) # 64 个通道
+
+x = torch.randn(32, 64, 28, 28)
+
+output = batch_norm(x)
+
+```
+
+  
+
+训练时用当前 batch 的均值和方差，同时更新移动平均统计量；推理时用训练时累积的移动平均统计量（running_mean 和 running_var）。
+
+  
+
+BN 抹平了不同特征（通道）之间的大小关系，保留了不同样本之间的相对关系。所以更适合 CV 任务，比如图像分类，不同样本之间的大小关系得以保留。CNN 的卷积层后面通常接 BatchNorm。
+
+  
+
+注意 batch size 太小（<8）时效果会变差，统计量不稳定。不适合序列长度变化大的 NLP 任务。
+
+  
+
+## Dropout
+
+  
+
+训练时随机将张量中的元素按概率 `p` 设置为 0，防止过拟合。剩余的激活神经元会按 `1/(1-p)` 缩放，保持输出期望值不变。
+
+  
+
+$$
+y = \begin{cases}
+0 & \text{with probability } p \\
+\frac{x}{1-p} & \text{with probability } 1-p
+\end{cases}
+$$
+
+  
+
+原理是强制网络学习更鲁棒的特征，不依赖特定神经元的组合。每次训练相当于训练一个不同的子网络，推理时相当于多个模型的平均。
+
+  
+
+### nn.Dropout
+
+  
+
+自动根据 `model.train()` / `model.eval()` 切换状态，推荐用这个：
+
+  
+
+```python
+
+class MyModel(nn.Module):
+	def __init__(self):
+		super().__init__()
+		self.dropout = nn.Dropout(p=0.5)
+		self.fc = nn.Linear(512, 256)
+
+	def forward(self, x):
+		x = self.fc(x)
+		x = self.dropout(x) # 训练时生效，推理时自动关闭
+		return x
+```
+
+  
+
+### nn.functional.dropout
+
+  
+
+通过 `training` 参数手动控制：
+
+  
+
+```python
+x = F.dropout(x, p=0.5, training=training)
+```
+
+  
+
+常用配置：全连接层 `p=0.5`，卷积层用 `nn.Dropout2d` 通常 `p=0.2~0.3`，Transformer 通常 `p=0.1`。dropout 率太高会欠拟合，太低防止过拟合效果不明显。
+
+## nn.PixelShuffle
+
+  
+
+PixelShuffle 是一种空间重排操作（Sub-Pixel Convolution），将图像的通道信息重新分布到空间维度上，实现上采样（放大图像）。
+
+  
+
+维度变换：`[B, C × r², H, W]` → `[B, C, H × r, W × r]`，其中 `r` 是上采样因子（upscale_factor）
+
+  
+
+工作原理：假设 `r=2`，输入 `[B, 4C, H, W]`，会将 `4C` 个通道重组为 `C × 2 × 2` 的形式，每个 `2×2` 的通道块对应输出空间的一个 `2×2` 区域，最后输出 `[B, C, 2H, 2W]`。
+
+  
+
+示例（单通道，r=2）：
+
+```
+输入: [B, 4, H, W] (4个通道)
+┌─────┬─────┐
+│ C0  │ C1  │
+├─────┼─────┤
+│ C2  │ C3  │
+└─────┴─────┘
+
+输出: [B, 1, 2H, 2W] (1个通道，空间扩大2倍)
+┌──┬──┐
+│C0│C1│
+├──┼──┤
+│C2│C3│
+└──┴──┘
+```
+
+使用：
+```python
+pixel_shuffle = nn.PixelShuffle(upscale_factor=2) # r=2
+x = torch.randn(1, 64, 32, 32) # [1, 64, 32, 32]
+output = pixel_shuffle(x) # [1, 16, 64, 64]
+# 通道数: 64 / (2^2) = 16，空间尺寸: 32 * 2 = 64
+```
+
+常用于超分辨率（Super-Resolution）和图像生成（GAN、VAE）的上采样阶段，可以替代转置卷积避免棋盘效应。好处是纯重排操作不增加参数，计算也比双线性插值 + 卷积快。
+
+注意输入通道数必须是 `C × r²` 的形式，通常在 PixelShuffle 之前用卷积层生成足够的通道数。

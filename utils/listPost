@@ -1,0 +1,6 @@
+#!/bin/bash
+echo "NOTES:"
+tree /Users/zip95297/Repository/BLOG/zjb-blog/source/_posts
+echo "----------------------------------------"
+echo "IMAGES:"
+tree /Users/zip95297/Repository/BLOG/zjb-blog/source/images -L 1

@@ -1,0 +1,184 @@
+#!/bin/bash
+# 给 markdown 文件交互式添加 Front-matter 属性
+
+Usage() {
+    echo "Usage: $0 <markdown file> [ created date ]"
+    echo "This script interactively adds attributes to a markdown file."
+    exit 1
+}
+
+if [[ $# -lt 1 ]]; then
+    Usage
+fi
+
+if [[ $# -eq 2 ]]; then
+    created_date="$2"
+fi
+
+# 获取现有的 tags 和 categories 存在于文件 ./value/tags 和 ./value/categories 中 返回一个list
+get_info(){
+    local index=$1 # tags or categories
+    local file="/Users/zip95297/Repository/BLOG/zjb-blog/utils/value/$index"
+    local list=()
+    while IFS= read -r line; do
+        list+=("$line")
+    done < "$file"
+    echo "${list[@]}"
+}
+
+# 写入 tags 和 categories 到文件 ./value/tags 和 ./value/categories 中
+write_info(){
+    local index=$1 # tags or categories
+    local value=$2
+    local file="/Users/zip95297/Repository/BLOG/zjb-blog/utils/value/$index"
+    # 判断是否已经存在
+    if grep -q "$value" "$file"; then
+        return
+    fi
+    echo "$value" >> "$file"
+}
+
+# 属性列表
+attr_options=( "title" "date" "updated" "mathjax" "tags" "categories" "keywords" "cover" "description" "comments" "top_img" "password" "message")
+
+# 参数检查
+[[ ! -f $1 ]] && echo "ERROR: File not found." && exit 1
+[[ "${1##*.}" != "md" ]] && echo "ERROR: Must be a .md file." && exit 1
+
+file="$1"
+filename=$(basename "$file" .md)
+
+# 读取文件所有行（兼容 Bash 3.2）
+lines=()
+while IFS= read -r line; do
+    lines+=("$line")
+done < "$file"
+
+# 检查是否已有 front-matter
+has_frontmatter=false
+start_line=0
+end_line=0
+if [[ "${lines[0]}" == "---" ]]; then
+    has_frontmatter=true
+    for i in "${!lines[@]}"; do
+        if [[ $i -gt 0 && "${lines[$i]}" == "---" ]]; then
+            end_line=$i
+            break
+        fi
+    done
+fi
+
+# 提取已有属性
+existing_attrs=()
+if $has_frontmatter; then
+    echo "📌 检测到已有 Front-matter，已存在的属性有："
+    for ((i=start_line+1; i<end_line; i++)); do
+        line="${lines[$i]}"
+        key=$(echo "$line" | cut -d: -f1 | xargs)
+        val=$(echo "$line" | cut -d: -f2- | xargs)
+        existing_attrs+=("$key")
+        printf " - %-12s: %s\n" "$key" "$val"
+    done
+fi
+
+
+# 函数：判断属性是否已存在
+has_attr() {
+    local target="$1"
+    for item in "${existing_attrs[@]}"; do
+        [[ "$item" == "$target" ]] && return 0
+    done
+    return 1
+}
+
+# 创建 front-matter（如果没有）
+if ! $has_frontmatter; then
+    echo "✅ 文件没有 front-matter，自动添加！"
+    {
+        echo "---"
+        echo "title: \"$filename\""
+        # echo "date: $(date '+%Y-%m-%d %H:%M:%S')"
+        if [[ -n $created_date ]]; then
+            echo "date: $created_date"
+        else
+            echo "date: $(date '+%Y-%m-%d %H:%M:%S')"
+        fi
+        echo "updated: $(date '+%Y-%m-%d %H:%M:%S')"
+        echo "---"
+        cat "$file"
+    } > "${file}.tmp" && mv "${file}.tmp" "$file"
+    echo "✅ 已添加基础 front-matter。"
+    exit 0
+fi
+
+# 逐一询问缺失属性
+tmpfile="${file}.tmp"
+head -n "$end_line" "$file" > "$tmpfile"
+
+for attr in "${attr_options[@]}"; do
+    if has_attr "$attr"; then
+        continue
+    fi
+    if [[ "$attr" == "message" ]]; then
+        echo "message 属性是密码提示"
+    elif [[ "$attr" == "comments" ]]; then
+        echo "comments 属性是评论区（默认为关）输入y就是开"
+    fi
+    echo -n "是否添加属性 '$attr'? (y/n): "
+    read ans
+    if [[ "$ans" == "y" || "$ans" == "Y" ]]; then
+        if [[ "$attr" == "title" ]]; then
+            value="$filename"
+        elif [[ "$attr" == "date" || "$attr" == "updated" ]]; then
+            value=$(date '+%Y-%m-%d %H:%M:%S')
+        elif [[ "$attr" == "comments" ]]; then
+            value=true
+        elif [[ "$attr" == "mathjax" ]]; then
+            value=true
+        elif [[ "$attr" == "tags" ]]; then
+            echo -n "请输入 '$attr' 的值：可以多个 用空格分隔："
+            get_info "tags"
+            echo "可选的 tags 有："
+            for tag in $(get_info "tags"); do
+                echo "	- $tag"
+            done
+            echo -n "请输入 tags 的值（多个用空格分隔）："
+            read value
+            # 按空格分隔 用于写回 转换成数组 逐个写
+            valueList=($value)
+            for tag in ${valueList[@]}; do
+                write_info "tags" "$tag"
+            done
+            # 转换成 - value \n - value 1个空格做分隔
+            value=$(echo " $value blog" | sed 's/ /\n    - /g' | sed '$d')
+        elif [[ "$attr" == "categories" ]]; then
+            get_info "categories"
+            echo "已经存在的 categories 有："
+            for category in $(get_info "categories"); do
+                echo "	- $category"
+            done
+            echo -n "请输入 '$attr' 的值："
+            read value
+            write_info "categories" "$value"
+        elif [[ "$attr" == "password" ]]; then
+            echo -n "请输入文章密码 '$attr' 的值：输入 d 就用生日"            
+            read value
+            if [[ "$value" == "d" ]]; then
+                value="20020820"
+            fi
+        else
+            echo -n "请输入 '$attr' 的值："
+            read value
+        fi
+        echo "$attr: $value" >> "$tmpfile"
+    elif [[ "$attr" == "comments" ]]; then
+        echo "$attr: false" >> "$tmpfile"
+    fi
+done
+
+# echo "---" >> "$tmpfile"
+tail -n +"$((end_line+1))" "$file" >> "$tmpfile"
+mv "$tmpfile" "$file"
+
+echo "✅ 属性补充完成：$file"
+echo "----------------------------------------"

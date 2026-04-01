@@ -1,0 +1,2 @@
+#!/bin/bash
+tree /Users/zip95297/Repository/DocumentLibrary/ObsidianNote -I "*.png"

@@ -1,0 +1,35 @@
+- class_name: 友情链接
+  class_desc: PYQ 属于是
+  link_list:
+    - name: Hershel
+      link: https://hershel1215.github.io/
+      avatar: https://s2.loli.net/2024/12/05/Uke9q1Y2tLjh8EP.jpg
+      descr: 贺博的博客
+    - name: Yintel
+      link: https://blog.yintel.top/
+      avatar: https://blog.yintel.top/img/avatar.png
+      descr: 尹神的博客   
+    - name: gugubird-sb
+      link: https://gugubird13.github.io/
+      avatar: https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png
+      descr: 打瓦喜欢被我带的博客
+
+
+- class_name: 网站
+  class_desc: 常用的工具网站
+  link_list:
+    - name: 公式 to Latex
+      link: https://simpletex.cn/ai/latex_ocr
+      avatar: https://simpletex.cn/img/logo.3a879d25.png
+      descr: 很好用的公式转latex网站
+
+    - name: 伴奏下载
+      link: http://search.5sing.kugou.com/?type=bz
+      avatar: 
+      descr: 免费伴奏下载网站,如果不可下载可以调试网页->网络监控，找到mp3文件url然后wget
+
+    - name: 升降调&变奏
+      link: https://vocalremover.org/zh/pitch
+      avatar: 
+      descr: 歌曲升降调变奏
+

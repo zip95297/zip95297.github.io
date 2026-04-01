@@ -1,0 +1,50 @@
+#!/bin/bash
+# 压缩 source/images/<note_name> 目录下的图片
+# brew install cwebp
+# Usage: ./compress_images.sh <note_name>
+Usage() {
+    echo "Usage: $0 <note_name>"
+    echo "This script compresses images in the source/images/<note_name> directory."
+    exit 1
+}
+
+if [[ $# -ne 1 ]]; then
+    Usage
+fi
+
+NOTE_NAME="$1"
+# 去掉拓展名
+NOTE_BASE="${NOTE_NAME%.*}"
+
+TARGET_DIR="/Users/zip95297/Repository/BLOG/zjb-blog/source/images/$NOTE_BASENAME"
+
+# 检查目录是否存在
+if [[ ! -d "$TARGET_DIR" ]]; then
+    echo "ERROR: Directory $TARGET_DIR does not exist."
+    exit 1
+fi
+
+spinner="/-\|"
+i=0
+
+count_imgs_file=$(mktemp)
+echo 0 > "$count_imgs_file"
+
+# 压缩图片
+find "$TARGET_DIR" -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" \) | while read img_file; do
+    i=$(( (i + 1) % 4 ))
+
+    count_imgs=$(<"$count_imgs_file")
+    count_imgs=$((count_imgs + 1))
+    echo "$count_imgs" > "$count_imgs_file"
+
+    printf "\r⚠️ Extractong image: ${spinner:i:1}  "
+    cwebp -q 38 "$img_file" -o "${img_file%.*}.webp" -quiet
+    count=$((count + 1))
+    rm "$img_file"
+done
+
+rm "$count_imgs_file"
+echo ""
+echo "✅ $count Images in $TARGET_DIR have been compressed to WebP format."
+echo "----------------------------------------"

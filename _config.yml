@@ -1,0 +1,141 @@
+# Hexo Configuration
+## Docs: https://hexo.io/docs/configuration.html
+## Source: https://github.com/hexojs/hexo/
+## 这是全局配置文件 和主题无关 butterfly 的config是只对主题生效的
+
+# Site
+title: 西郊有密林 祝君出重围
+subtitle: '广告位🪧招租'
+description: '一个人'
+keywords:
+author: zip95297
+language: zh-CN
+timezone: Asia/Shanghai
+
+# URL
+## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
+url: http://zip95297.github.io
+permalink: :year/:month/:day/:title/
+permalink_defaults:
+pretty_urls:
+  trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
+  trailing_html: true # Set to false to remove trailing '.html' from permalinks
+
+# Directory
+# suorce dir 是用来存放源文件的 .md 文件
+source_dir: source
+# public dir 是用来存放编译后的文件的 hexo generate 之后会把文件放到这个目录下
+public_dir: public
+# 生成的标签网页 存放在这个目录下 
+tag_dir: tags
+# 生成的归档网页 存放在这个目录下
+archive_dir: archives
+# 生成的分类网页 存放在这个目录下
+category_dir: categories
+# 如果文章提供代码下载链接 存放在这个里
+code_dir: downloads/code
+# 语言目录 支持多语言用的 我暂时不需要
+i18n_dir: :lang
+# 这个是用来存放不需要编译或者渲染的文件的 例如 视频图片pdf
+skip_render:
+
+# 写完一个 markdown 放在 source/_post 目录下
+# 这个目录下的文件会被 hexo generate 自动编译成 html 输出到 public 目录下
+
+# Writing
+# 新建文章的文件名格式 hexo new "hello" 就会在 source/_posts 目录下生成一个 hello.md 文件
+new_post_name: :title.md # File name of new posts
+# 默认用的模板 themes/butterfly/layout/_layout/post.ejs
+default_layout: post
+titlecase: false # Transform title into titlecase
+external_link:
+  enable: true # Open external links in new tab
+  field: site # Apply to the whole site
+  exclude: ''
+filename_case: 0
+render_drafts: false
+# 每个文章有单独的文件夹 写文章时会同时生成一个同名文件夹，用来放图片之类的资源
+post_asset_folder: true
+marked:
+  prependRoot: true
+  postAsset: true
+relative_link: false
+future: true
+syntax_highlighter: highlight.js
+highlight:
+  enable: true
+  line_number: true
+  auto_detect: false
+  tab_replace: ''
+  wrap: true
+  hljs: false
+prismjs:
+  preprocess: true
+  line_number: true
+  tab_replace: ''
+
+# Home page setting
+# path: Root path for your blogs index page. (default = '')
+# per_page: Posts displayed per page. (0 = disable pagination)
+# order_by: Posts order. (Order by date descending by default)
+index_generator:
+  path: ''
+  per_page: 15
+  order_by: -date
+
+# Category & Tag
+default_category: uncategorized
+category_map:
+tag_map:
+
+# Metadata elements
+## https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta
+meta_generator: true
+
+# Date / Time format
+## Hexo uses Moment.js to parse and display date
+## You can customize the date format as defined in
+## http://momentjs.com/docs/#/displaying/format/
+date_format: YYYY-MM-DD
+time_format: HH:mm:ss
+## updated_option supports 'mtime', 'date', 'empty'
+updated_option: 'date'
+
+# Pagination
+## Set per_page to 0 to disable pagination
+per_page: 15
+pagination_dir: page
+
+# Include / Exclude file(s)
+## include:/exclude: options only apply to the 'source/' folder
+include:
+exclude:
+ignore:
+
+# Extensions
+## Plugins: https://hexo.io/plugins/
+## Themes: https://hexo.io/themes/
+#theme: landscape
+theme: butterfly
+
+# 支持公式渲染
+markdown:
+  # 一级目录无法跳转
+  anchors:
+    level: 1
+    # 这个是给锚点显示图标
+    permalink: false
+
+  render:
+    html: true
+    xhtmlOut: true
+    breaks: true
+    linkify: true
+    typographer: true
+
+# Deployment
+## Docs: https://hexo.io/docs/one-command-deployment
+deploy:
+  type: git
+  repo: https://github.com/zip95297/zip95297.github.io.git
+  branch: gh-pages
